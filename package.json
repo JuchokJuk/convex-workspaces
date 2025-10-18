@@ -1,0 +1,62 @@
+{
+  "name": "convex-workspaces",
+  "version": "0.0.1",
+  "description": "Ready-to-use module for organizing, sharing, and collaborative access to convex entities",
+  "author": "Juchok Juk",
+  "license": "Unlicense",
+  "homepage": "https://github.com/JuchokJuk/convex-workspaces#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JuchokJuk/convex-workspaces.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JuchokJuk/convex-workspaces/issues"
+  },
+  "keywords": [
+    "convex",
+    "workspaces",
+    "collaboration",
+    "sharing",
+    "roles"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "convex dev --local",
+    "build": "tsc -p tsconfig.build.json",
+    "build:watch": "tsc --watch",
+    "prepublishOnly": "npm run build && npm run test",
+    "prepack": "npm run build",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitest/ui": "^3.2.4",
+    "typescript": "^5.0.0",
+    "vitepress": "^2.0.0-alpha.12",
+    "vitest": "^3.2.4",
+    "dotenv": "^17.2.3"
+  },
+  "dependencies": {
+    "@convex-dev/auth": "^0.0.90",
+    "convex": "^1.28.0"
+  }
+}

@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+coverage/
+
+# Environment variables
+.env.local
+
+
+
+# Documentation build (VitePress)
+docs/.vitepress/dist/
+docs/.vitepress/cache/
