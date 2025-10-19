@@ -1,7 +1,9 @@
-import { mutation, v } from "../convex-stubs";
-import { requireAuth } from "../utils/authUtils";
 
-export const createWorkspace = mutation({
+import { mutationGeneric } from "convex/server";
+import { requireAuth } from "../utils/authUtils";
+import { v } from "convex/values";
+
+export const createWorkspace = mutationGeneric({
   args: {
     name: v.string(),
     personal: v.boolean(),
@@ -26,7 +28,7 @@ export const createWorkspace = mutation({
   },
 });
 
-export const addUserToWorkspace = mutation({
+export const addUserToWorkspace = mutationGeneric({
   args: {
     workspaceId: v.id("workspaces"),
     targetUserId: v.id("users"),
@@ -67,7 +69,7 @@ export const addUserToWorkspace = mutation({
 });
 
 export function assembleDeleteWorkspace(onWorkspaceDelete?: (ctx: any, workspaceId: any) => Promise<void>) {
-  return mutation({
+  return mutationGeneric({
     args: { workspaceId: v.id("workspaces") },
     handler: async (ctx: any, args: any) => {
       const userId = await requireAuth(ctx);

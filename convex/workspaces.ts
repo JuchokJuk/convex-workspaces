@@ -1,5 +1,6 @@
 import { convexWorkspaces } from "../src/convexWorkspaces";
 import { Id } from "./_generated/dataModel";
+import { MutationCtx } from "./_generated/server";
 
 export const {
   // Workspace mutations
@@ -26,23 +27,23 @@ export const {
   canDeleteProject,
 } = convexWorkspaces({
   callbacks: {
-    onProjectDelete: async (ctx: any, projectId: Id<"projects">) => {
+    onProjectDelete: async (ctx: MutationCtx, projectId: Id<"projects">) => {
       // Удаляем все документы проекта
       const documents = await ctx.db
         .query("documents")
-        .withIndex("by_project", (q: any) => q.eq("projectId", projectId))
+        .withIndex("by_project", (q) => q.eq("projectId", projectId))
         .collect();
 
-      await Promise.all(documents.map((doc: any) => ctx.db.delete(doc._id)));
+      await Promise.all(documents.map((doc) => ctx.db.delete(doc._id)));
 
       // Удаляем все отчеты проекта
       const reports = await ctx.db
         .query("reports")
-        .withIndex("by_project", (q: any) => q.eq("projectId", projectId))
+        .withIndex("by_project", (q) => q.eq("projectId", projectId))
         .collect();
 
       await Promise.all(
-        reports.map((report: any) => ctx.db.delete(report._id))
+        reports.map((report) => ctx.db.delete(report._id))
       );
     },
   },

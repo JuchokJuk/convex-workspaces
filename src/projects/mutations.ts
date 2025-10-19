@@ -1,26 +1,37 @@
-import { mutation, v } from "../convex-stubs";
+import {
+  GenericDataModel,
+  GenericMutationCtx,
+  mutationGeneric,
+} from "convex/server";
+import { v } from "convex/values";
 import { requireAuth } from "../utils/authUtils";
 import { requirePersonalWorkspace } from "../utils/requirePersonalWorkspace";
 
-export const createProject = mutation({
+export const createProject = mutationGeneric({
   args: {
     workspaceId: v.id("workspaces"),
     name: v.string(),
     description: v.optional(v.string()),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx: GenericMutationCtx<GenericDataModel>, args: any) => {
     const userId = await requireAuth(ctx);
 
     // Проверяем, что пользователь имеет права на создание проектов в воркспейсе
     const workspaceUser = await ctx.db
       .query("workspaceUsers")
-      .withIndex("by_workspace_user", (q: any) => 
+      .withIndex("by_workspace_user", (q: any) =>
         q.eq("workspaceId", args.workspaceId).eq("userId", userId)
       )
       .first();
 
-    if (!workspaceUser || (workspaceUser.userRole !== "admin" && workspaceUser.userRole !== "editor")) {
-      throw new Error("User does not have permission to create projects in this workspace");
+    if (
+      !workspaceUser ||
+      (workspaceUser.userRole !== "admin" &&
+        workspaceUser.userRole !== "editor")
+    ) {
+      throw new Error(
+        "User does not have permission to create projects in this workspace"
+      );
     }
 
     const projectId = await ctx.db.insert("projects", {
@@ -41,12 +52,16 @@ export const createProject = mutation({
   },
 });
 
-export const shareProject = mutation({
+export const shareProject = mutationGeneric({
   args: {
     sourceWorkspaceId: v.id("workspaces"),
     projectId: v.id("projects"),
     targetUserId: v.id("users"),
-    targetUserRole: v.union(v.literal("admin"), v.literal("editor"), v.literal("viewer")),
+    targetUserRole: v.union(
+      v.literal("admin"),
+      v.literal("editor"),
+      v.literal("viewer")
+    ),
   },
   handler: async (ctx: any, args: any) => {
     const currentUserId = await requireAuth(ctx);
@@ -65,18 +80,26 @@ export const shareProject = mutation({
 
     // Определяем эффективную роль (принцип наименьших привилегий)
     const senderRole = currentUserWorkspaceRole.userRole;
-    const effectiveRole = senderRole === "admin" ? args.targetUserRole :
-                         senderRole === "editor" && args.targetUserRole !== "admin" ? args.targetUserRole :
-                         "viewer";
+    const effectiveRole =
+      senderRole === "admin"
+        ? args.targetUserRole
+        : senderRole === "editor" && args.targetUserRole !== "admin"
+        ? args.targetUserRole
+        : "viewer";
 
     // Получаем персональный воркспейс целевого пользователя
-    const targetPersonalWorkspace = await requirePersonalWorkspace(ctx, args.targetUserId);
+    const targetPersonalWorkspace = await requirePersonalWorkspace(
+      ctx,
+      args.targetUserId
+    );
 
     // Проверяем, не расшарен ли уже проект
     const existingShare = await ctx.db
       .query("workspaceProjects")
       .withIndex("by_project_workspace", (q: any) =>
-        q.eq("projectId", args.projectId).eq("workspaceId", targetPersonalWorkspace._id)
+        q
+          .eq("projectId", args.projectId)
+          .eq("workspaceId", targetPersonalWorkspace._id)
       )
       .first();
 
@@ -95,8 +118,10 @@ export const shareProject = mutation({
   },
 });
 
-export function assembleDeleteProject(onProjectDelete?: (ctx: any, projectId: any) => Promise<void>) {
-  return mutation({
+export function assembleDeleteProject(
+  onProjectDelete?: (ctx: any, projectId: any) => Promise<void>
+) {
+  return mutationGeneric({
     args: { projectId: v.id("projects") },
     handler: async (ctx: any, args: any) => {
       const userId = await requireAuth(ctx);
@@ -114,7 +139,8 @@ export function assembleDeleteProject(onProjectDelete?: (ctx: any, projectId: an
         )
         .first();
 
-      const canDelete = workspaceRole?.userRole === "admin" || project.ownerId === userId;
+      const canDelete =
+        workspaceRole?.userRole === "admin" || project.ownerId === userId;
 
       if (!canDelete) {
         throw new Error("User does not have permission to delete this project");
@@ -123,10 +149,14 @@ export function assembleDeleteProject(onProjectDelete?: (ctx: any, projectId: an
       // Удаляем связи проекта с воркспейсами
       const workspaceProjects = await ctx.db
         .query("workspaceProjects")
-        .withIndex("by_project_workspace", (q: any) => q.eq("projectId", args.projectId))
+        .withIndex("by_project_workspace", (q: any) =>
+          q.eq("projectId", args.projectId)
+        )
         .collect();
 
-      await Promise.all(workspaceProjects.map((wp: any) => ctx.db.delete(wp._id)));
+      await Promise.all(
+        workspaceProjects.map((wp: any) => ctx.db.delete(wp._id))
+      );
 
       // Вызываем кастомный колбек
       await onProjectDelete?.(ctx, args.projectId);

@@ -1,6 +1,8 @@
-import { query, v } from "../convex-stubs";
+
+import { queryGeneric } from "convex/server";
 import { requireAuth } from "../utils/authUtils";
 import { requirePersonalWorkspace } from "../utils/requirePersonalWorkspace";
+import { v } from "convex/values";
 
 // Вспомогательная функция для получения роли проекта
 async function getProjectRoleInternal(ctx: any, userId: string, projectId: string) {
@@ -32,7 +34,7 @@ async function getProjectRoleInternal(ctx: any, userId: string, projectId: strin
   return sharedAccess?.accessLevel || null;
 }
 
-export const getProject = query({
+export const getProject = queryGeneric({
   args: { projectId: v.id("projects") },
   handler: async (ctx: any, args: any) => {
     const userId = await requireAuth(ctx);
@@ -40,7 +42,7 @@ export const getProject = query({
   },
 });
 
-export const getUserProjectsWithRoles = query({
+export const getUserProjectsWithRoles = queryGeneric({
   args: {},
   handler: async (ctx: any) => {
     const userId = await requireAuth(ctx);
@@ -68,7 +70,7 @@ export const getUserProjectsWithRoles = query({
   },
 });
 
-export const getProjectRole = query({
+export const getProjectRole = queryGeneric({
   args: { projectId: v.id("projects") },
   handler: async (ctx: any, args: any) => {
     const userId = await requireAuth(ctx);
@@ -76,7 +78,7 @@ export const getProjectRole = query({
   },
 });
 
-export const canEditProject = query({
+export const canEditProject = queryGeneric({
   args: { projectId: v.id("projects") },
   handler: async (ctx: any, args: any) => {
     const userId = await requireAuth(ctx);
@@ -85,7 +87,7 @@ export const canEditProject = query({
   },
 });
 
-export const canDeleteProject = query({
+export const canDeleteProject = queryGeneric({
   args: { projectId: v.id("projects") },
   handler: async (ctx: any, args: any) => {
     const userId = await requireAuth(ctx);

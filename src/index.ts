@@ -16,7 +16,3 @@ export const workspaceSchema = {
 
 // Export types
 export type { UserRole, ProjectRole } from "./utils/permissions";
-
-// Re-export Convex types that users might need
-export type { Id } from "./convex-stubs";
-export type { FunctionReturnType } from "convex/server";

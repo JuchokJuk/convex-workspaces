@@ -1,3 +1,5 @@
+import { GenericId } from "convex/values";
+
 /**
  * Initializes a personal workspace for a user.
  * This function should be called during user registration or in the auth callback
@@ -10,7 +12,7 @@
  */
 export async function initializePersonalWorkspace(
   ctx: any,
-  userId: any,
+  userId: GenericId<"users">,
   workspaceName: string = "My Workspace"
 ) {
   // Check if user already has a personal workspace

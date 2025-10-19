@@ -35,13 +35,13 @@
   "scripts": {
     "dev": "convex dev --local",
     "build": "tsc -p tsconfig.build.json",
-    "build:watch": "tsc --watch",
-    "prepublishOnly": "npm run build && npm run test",
     "prepack": "npm run build",
+    
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
+
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",

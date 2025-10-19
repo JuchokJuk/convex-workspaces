@@ -1,8 +1,9 @@
-import { query, v } from "../convex-stubs";
+import { queryGeneric } from "convex/server";
+import { v } from "convex/values";
 import { requireAuth } from "../utils/authUtils";
 import { requirePersonalWorkspace } from "../utils/requirePersonalWorkspace";
 
-export const getPersonalWorkspace = query({
+export const getPersonalWorkspace = queryGeneric({
   args: {},
   handler: async (ctx: any) => {
     const userId = await requireAuth(ctx);
@@ -11,7 +12,7 @@ export const getPersonalWorkspace = query({
   },
 });
 
-export const getUserWorkspaces = query({
+export const getUserWorkspaces = queryGeneric({
   args: {},
   handler: async (ctx: any) => {
     const userId = await requireAuth(ctx);
@@ -32,7 +33,7 @@ export const getUserWorkspaces = query({
   },
 });
 
-export const getWorkspace = query({
+export const getWorkspace = queryGeneric({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx: any, args: any) => {
     const userId = await requireAuth(ctx);
@@ -40,7 +41,7 @@ export const getWorkspace = query({
   },
 });
 
-export const getWorkspaceRole = query({
+export const getWorkspaceRole = queryGeneric({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx: any, args: any) => {
     const userId = await requireAuth(ctx);
