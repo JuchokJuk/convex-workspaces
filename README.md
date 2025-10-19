@@ -88,14 +88,6 @@ Think of it as **"Convex Auth + Team Collaboration"** - it extends your existing
 - **GitHub Repository**: [JuchokJuk/convex-workspaces](https://github.com/JuchokJuk/convex-workspaces)
 - **Documentation**: [convex-workspaces.vercel.app](https://convex-workspaces.vercel.app)
 
-## 📄 License
-
-Unlicense - see [LICENSE](LICENSE) for details.
-
-## 🤝 Contributing
-
-We welcome contributions to the project! Please check out our [contributing guide](CONTRIBUTING.md).
-
 ## 📞 Support
 
 If you have questions or issues, create an [issue](https://github.com/JuchokJuk/convex-workspaces/issues) or refer to the [documentation](https://convex-workspaces.vercel.app/).
