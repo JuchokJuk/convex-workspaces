@@ -3,15 +3,14 @@ export { convexWorkspaces } from "./convexWorkspaces";
 export { initializePersonalWorkspace } from "./utils/initializePersonalWorkspace";
 
 // Export schemas
-import { workspacesSchema } from "./workspaces/schema";
-import { projectsSchema } from "./projects/schema";
+import { workspacesSchema as workspaces } from "./workspaces/schema";
+import { projectsSchema as projects } from "./projects/schema";
 
-export { workspacesSchema, projectsSchema };
 
 // Combined schema for easy import
-export const workspaceSchema = {
-  ...workspacesSchema,
-  ...projectsSchema,
+export const workspacesSchema = {
+  ...workspaces,
+  ...projects,
 };
 
 // Export types

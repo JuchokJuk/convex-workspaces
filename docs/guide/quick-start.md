@@ -50,13 +50,13 @@ In `convex/schema.ts`, import the workspace schema and your user table:
 ```typescript
 import { defineSchema } from "convex/server";
 import { authTables } from "@convex-dev/auth/server";
-import { workspaceSchema } from "convex-workspaces";
+import { workspacesSchema } from "convex-workspaces";
 import { users } from "./users/schema"; // Import your user schema
 
 export default defineSchema({
   ...authTables,
   users, // Add your user table
-  ...workspaceSchema,
+  ...workspacesSchema,
   // Your other tables...
 });
 ```

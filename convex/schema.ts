@@ -1,6 +1,6 @@
 import { defineSchema } from "convex/server";
 import { authTables } from "@convex-dev/auth/server";
-import { workspaceSchema } from "../src/index";
+import { workspacesSchema } from "../src/index";
 
 import { users } from "./users/schema";
 import { documents } from "./documents/schema";
@@ -11,7 +11,7 @@ export default defineSchema({
   users,
 
   // Воркспейсы и проекты из модуля
-  ...workspaceSchema,
+  ...workspacesSchema,
 
   // Моковые сущности
   documents,
