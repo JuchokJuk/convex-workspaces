@@ -8,6 +8,8 @@ export default defineConfig({
       { text: "Guide", link: "/guide/quick-start" },
       { text: "Reference", link: "/reference/callbacks" },
       { text: "Tests", link: "/tests/" },
+      { text: "NPM", link: "https://www.npmjs.com/package/convex-workspaces" },
+      { text: "GitHub", link: "https://github.com/JuchokJuk/convex-workspaces" },
     ],
 
     sidebar: {

@@ -6,6 +6,8 @@
 npm install convex-workspaces
 ```
 
+[![NPM](https://nodei.co/npm/convex-workspaces.png)](https://www.npmjs.com/package/convex-workspaces)
+
 ## Minimum Requirements for Integration
 
 ### 1. Extend User Table

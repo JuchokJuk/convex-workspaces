@@ -1,6 +1,6 @@
 {
   "name": "convex-workspaces",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Ready-to-use module for organizing, sharing, and collaborative access to convex entities",
   "author": "Juchok Juk",
   "license": "Unlicense",

@@ -13,6 +13,12 @@ hero:
     - theme: alt
       text: Usage Examples
       link: /guide/examples
+    - theme: alt
+      text: NPM Package
+      link: https://www.npmjs.com/package/convex-workspaces
+    - theme: alt
+      text: GitHub
+      link: https://github.com/JuchokJuk/convex-workspaces
 
 features:
   - icon: 🏢
