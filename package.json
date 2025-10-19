@@ -1,10 +1,10 @@
 {
   "name": "convex-workspaces",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Ready-to-use module for organizing, sharing, and collaborative access to convex entities",
   "author": "Juchok Juk",
   "license": "Unlicense",
-  "homepage": "https://github.com/JuchokJuk/convex-workspaces#readme",
+  "homepage": "https://convex-workspaces.vercel.app",
   "repository": {
     "type": "git",
     "url": "https://github.com/JuchokJuk/convex-workspaces.git"
