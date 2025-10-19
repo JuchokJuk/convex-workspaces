@@ -1,5 +1,16 @@
 # Quick Start
 
+## What This Module Does
+
+This module adds **multi-user collaboration** to your Convex app:
+
+- **Workspaces**: Groups where users can collaborate (like "Marketing Team" or "Project Alpha")
+- **Role-based Access**: Admin can invite users, editors can modify data, viewers can only read
+- **Sharing System**: Share entities between workspaces with proper permissions
+- **Personal Workspaces**: Every user gets their own private space automatically
+
+Think of it as **"Convex Auth + Team Collaboration"** - it extends your existing Convex app with multi-user features.
+
 ## Installation
 
 ```bash

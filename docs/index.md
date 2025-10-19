@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Convex Workspaces"
-  text: "Project Sharing & Team Collaboration"
-  tagline: "Ready-to-use module for organizing, sharing, and collaborative access to convex entities"
+  text: "Multi-User Collaboration for Convex"
+  tagline: "Add team workspaces, role-based access, and sharing capabilities to your Convex app"
 
   actions:
     - theme: brand
@@ -22,21 +22,21 @@ hero:
 
 features:
   - icon: 🏢
-    title: Structured Workspaces
-    details: Personal and team workspaces for organizing project work
+    title: Team Workspaces
+    details: Create groups where users can collaborate (like "Marketing Team" or "Project Alpha")
   - icon: 👥
-    title: Role System
-    details: Simple role system (admin/editor/viewer) with automatic access control
+    title: Role-Based Access
+    details: Admin can invite users, editors can modify data, viewers can only read
   - icon: 🔗
-    title: Project Sharing
-    details: Secure project sharing between users with least privilege principle
-  - icon: 🛡️
-    title: Security
-    details: Built-in data protection, validation, and cascade deletion
+    title: Sharing System
+    details: Share entities between workspaces with proper permissions
+  - icon: 🏠
+    title: Personal Spaces
+    details: Every user gets their own private workspace automatically
   - icon: ⚡
     title: TypeScript
     details: Full type safety and ready-to-use Convex mutations/queries
   - icon: 🧪
     title: Testing
-    details: Complete test coverage with Vitest for reliability
+    details: Test coverage with Vitest for reliability
 ---

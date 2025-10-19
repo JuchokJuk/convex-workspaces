@@ -4,7 +4,7 @@
 [![License: Unlicense](https://img.shields.io/badge/License-Unlicense-blue.svg)](https://unlicense.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-JuchokJuk%2Fconvex--workspaces-blue)](https://github.com/JuchokJuk/convex-workspaces)
 
-Ready-to-use Convex module with project sharing and team collaboration features.
+A module that adds **multi-user collaboration** to your Convex app with workspaces, role-based access, and sharing capabilities.
 
 ## 📦 Installation
 
@@ -13,6 +13,13 @@ npm install convex-workspaces
 ```
 
 [![NPM](https://nodei.co/npm/convex-workspaces.png)](https://www.npmjs.com/package/convex-workspaces)
+
+## 🎯 The Problem It Solves
+
+- You have a Convex app with users
+- You want some users to collaborate on the same data/entities
+- You need different permission levels (admin/editor/viewer)
+- You want to share access between users
 
 ## 🚀 Quick Start
 
@@ -42,14 +49,32 @@ export const {
 });
 ```
 
-## ✨ Features
+### Real Example
 
-- 🏢 **Structured Workspaces** - personal and team workspaces
-- 👥 **Role System** - admin/editor/viewer with automatic access control
-- 🔗 **Project Sharing** - secure sharing with least privilege principle
-- 🛡️ **Security** - built-in data protection and validation
-- ⚡ **TypeScript** - full type safety and ready-to-use Convex functions
-- 🧪 **Testing** - complete test coverage with Vitest
+```typescript
+// Create a team workspace
+const teamId = await createWorkspace({ name: "Marketing Team", personal: false });
+
+// Add users with roles
+await addUserToWorkspace({ 
+  workspaceId: teamId, 
+  targetUserId: "user123", 
+  userRole: "editor" 
+});
+
+// Now all team members can access the same data based on their role
+```
+
+## ✨ What It Provides
+
+- 🏢 **Workspaces**: Groups where users can collaborate (like "Marketing Team" or "Project Alpha")
+- 👥 **Role-based Access**: Admin can invite users, editors can modify data, viewers can only read
+- 🔗 **Sharing System**: Share entities between workspaces with proper permissions
+- 🏠 **Personal Workspaces**: Every user gets their own private space
+- ⚡ **TypeScript**: Full type safety and ready-to-use Convex functions
+- 🧪 **Testing**: Test coverage with Vitest
+
+Think of it as **"Convex Auth + Team Collaboration"** - it extends your existing Convex app with multi-user features.
 
 ## 📚 Documentation
 
