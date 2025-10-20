@@ -19,7 +19,6 @@ export default defineConfig({
           items: [
             { text: "Quick Start", link: "/guide/quick-start" },
             { text: "Usage Examples", link: "/guide/examples" },
-            { text: "Migration", link: "/guide/migration" },
           ],
         },
       ],
