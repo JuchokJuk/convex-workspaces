@@ -16,16 +16,8 @@ export const workspacesTables = {
   entityAccess,
 };
 
-export type WorkspacesTables = typeof workspacesTables;
-
 // Export types
 export type {
   UserRole,
   ProjectAccessLevel,
-  NonEmptyString,
-  AnyConvexCtx,
 } from "./types";
-
-// Deprecated legacy exports (kept for backward-compatibility)
-export type { UserRole as DeprecatedUserRole } from "./types";
-export type { ProjectAccessLevel as DeprecatedProjectRole } from "./types";
