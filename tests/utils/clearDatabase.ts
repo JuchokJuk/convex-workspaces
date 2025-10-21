@@ -6,7 +6,8 @@ dotenv.config({ path: ".env.local" });
 
 const convexUrl = process.env.CONVEX_URL!;
 
+const client = new ConvexHttpClient(convexUrl);
+
 export async function clearDatabase(): Promise<void> {
-  const client = new ConvexHttpClient(convexUrl);
-  await client.mutation(api.utils.testHelpers.clear);
+  await client.mutation(api.utils.test.clear);
 }

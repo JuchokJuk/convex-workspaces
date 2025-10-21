@@ -1,9 +1,9 @@
-import type { GenericDataModel, GenericQueryCtx } from "convex/server";
+import type { GenericDataModel, GenericQueryCtx, IdField } from "convex/server";
 
 export async function getMembership(
   ctx: GenericQueryCtx<GenericDataModel>,
-  workspaceId: string,
-  userId: any
+  workspaceId: IdField<"workspaces">["_id"],
+  userId: IdField<"users">["_id"]
 ) {
   return await ctx.db
     .query("memberships")

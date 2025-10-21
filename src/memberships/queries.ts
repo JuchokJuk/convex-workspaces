@@ -1,7 +1,7 @@
 import { queryGeneric } from "convex/server";
 import { v } from "convex/values";
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { getMembership } from "../utils/queries/getMembership";
+import { requireAuth } from "../utils/validation/requireAuth";
 
 export const getMembershipByWorkspaceAndUser = queryGeneric({
   args: {
@@ -16,14 +16,16 @@ export const getMembershipByWorkspaceAndUser = queryGeneric({
 export const getMembershipsByWorkspace = queryGeneric({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx, args) => {
-        const userId = getAuthUserId(ctx);
+    const userId = await requireAuth(ctx);
 
     const membership = await getMembership(ctx, args.workspaceId, userId);
     if (!membership) throw new Error("Access denied");
 
     return await ctx.db
       .query("memberships")
-      .withIndex("by_workspace_user", (q) => q.eq("workspaceId", args.workspaceId))
+      .withIndex("by_workspace_user", (q) =>
+        q.eq("workspaceId", args.workspaceId)
+      )
       .collect();
   },
 });
@@ -31,7 +33,7 @@ export const getMembershipsByWorkspace = queryGeneric({
 export const getMembershipsByUser = queryGeneric({
   args: {},
   handler: async (ctx, args) => {
-        const userId = getAuthUserId(ctx);
+    const userId = await requireAuth(ctx);
 
     return await ctx.db
       .query("memberships")
@@ -43,7 +45,7 @@ export const getMembershipsByUser = queryGeneric({
 export const getCurrentUserMembership = queryGeneric({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx, args) => {
-        const userId = getAuthUserId(ctx);
+    const userId = await requireAuth(ctx);
 
     return await getMembership(ctx, args.workspaceId, userId);
   },

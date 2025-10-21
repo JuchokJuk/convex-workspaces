@@ -6,7 +6,7 @@ dotenv.config({ path: ".env.local" });
 
 const convexUrl = process.env.CONVEX_URL!;
 
-export async function createAuthedClient(): Promise<ConvexHttpClient> {
+export async function createSignedClient(): Promise<ConvexHttpClient> {
   const client = new ConvexHttpClient(convexUrl);
   const authResult = await client.action(api.auth.signIn, { provider: "anonymous" });
   if (!authResult.tokens) throw new Error("Не получены токены при авторизации анонимного пользователя");

@@ -1,14 +1,14 @@
 import { queryGeneric } from "convex/server";
 import { v } from "convex/values";
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { getMembership } from "../utils/queries/getMembership";
 import { getEntityAccess } from "../utils/queries/getEntityAccess";
+import { requireAuth } from "../utils/validation/requireAuth";
 import { getEffectiveAccess } from "../utils/permissions/getEffectiveAccess";
 
 export const getEntityById = queryGeneric({
   args: { entityId: v.id("entities") },
   handler: async (ctx, args) => {
-        const userId = getAuthUserId(ctx);
+    const userId = await requireAuth(ctx);
 
     const entity = await ctx.db.get(args.entityId);
     if (!entity) return null;
@@ -16,7 +16,7 @@ export const getEntityById = queryGeneric({
     const membership = await getMembership(ctx, entity.workspaceId, userId);
     if (!membership) {
       const entityAccess = await getEntityAccess(ctx, args.entityId);
-      const hasAccess = entityAccess.some((access: any) => 
+      const hasAccess = entityAccess.some((access: any) =>
         getMembership(ctx, access.workspaceId, userId)
       );
       if (!hasAccess) throw new Error("Access denied");
@@ -29,7 +29,7 @@ export const getEntityById = queryGeneric({
 export const getEntitiesByWorkspace = queryGeneric({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx, args) => {
-        const userId = getAuthUserId(ctx);
+    const userId = await requireAuth(ctx);
 
     const membership = await getMembership(ctx, args.workspaceId, userId);
     if (!membership) throw new Error("Access denied");
@@ -44,18 +44,26 @@ export const getEntitiesByWorkspace = queryGeneric({
 export const checkEntityAccess = queryGeneric({
   args: {
     entityId: v.id("entities"),
-    userId: v.string(),
+    userId: v.id("users"),
   },
   handler: async (ctx, args) => {
     const entity = await ctx.db.get(args.entityId);
     if (!entity) return false;
 
-    const membership = await getMembership(ctx, entity.workspaceId, args.userId);
+    const membership = await getMembership(
+      ctx,
+      entity.workspaceId,
+      args.userId
+    );
     if (membership) return true;
 
     const entityAccess = await getEntityAccess(ctx, args.entityId);
     for (const access of entityAccess) {
-      const userMembership = await getMembership(ctx, access.workspaceId as any, args.userId);
+      const userMembership = await getMembership(
+        ctx,
+        access.workspaceId as any,
+        args.userId
+      );
       if (userMembership) return true;
     }
 
@@ -65,8 +73,20 @@ export const checkEntityAccess = queryGeneric({
 
 export const getUserAccessibleEntities = queryGeneric({
   args: {},
+  returns: v.array(
+    v.object({
+      _id: v.id("entities"),
+      _creationTime: v.number(),
+      workspaceId: v.id("workspaces"),
+      userRole: v.union(
+        v.literal("admin"),
+        v.literal("editor"),
+        v.literal("viewer")
+      ),
+    })
+  ),
   handler: async (ctx, args) => {
-        const userId = getAuthUserId(ctx);
+    const userId = await requireAuth(ctx);
 
     const memberships = await ctx.db
       .query("memberships")
@@ -78,7 +98,9 @@ export const getUserAccessibleEntities = queryGeneric({
     for (const membership of memberships) {
       const entities = await ctx.db
         .query("entities")
-        .withIndex("by_workspace", (q) => q.eq("workspaceId", membership.workspaceId))
+        .withIndex("by_workspace", (q) =>
+          q.eq("workspaceId", membership.workspaceId)
+        )
         .collect();
 
       for (const entity of entities) {
@@ -90,15 +112,17 @@ export const getUserAccessibleEntities = queryGeneric({
       }
     }
 
-    const allEntityAccess = await ctx.db
-      .query("entityAccess")
-      .collect();
+    const allEntityAccess = await ctx.db.query("entityAccess").collect();
 
     for (const access of allEntityAccess) {
-      const userMembership = await getMembership(ctx, access.workspaceId, userId);
+      const userMembership = await getMembership(
+        ctx,
+        access.workspaceId,
+        userId
+      );
       if (userMembership) {
         const entity = await ctx.db.get(access.entityId);
-        if (entity && !accessibleEntities.find(e => e._id === entity._id)) {
+        if (entity && !accessibleEntities.find((e) => e._id === entity._id)) {
           accessibleEntities.push({
             ...entity,
             userRole: access.accessLevel,

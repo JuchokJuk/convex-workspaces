@@ -1,0 +1,114 @@
+import { query } from "../_generated/server";
+import { v } from "convex/values";
+import { api } from "../_generated/api";
+import { requireAuth } from "../utils/requireAuth";
+import { Id } from "../_generated/dataModel";
+
+export const getDocumentById = query({
+  args: {
+    documentId: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const document = await ctx.db.get(args.documentId);
+    if (!document) return null;
+
+    // Проверяем доступ к entity через convex-workspaces
+    const entity = await ctx.db.get(document.entityId);
+    if (!entity) throw new Error("Entity not found");
+
+    const membership = await ctx.runQuery(
+      api.workspaces.getCurrentUserMembership,
+      {
+        workspaceId: entity.workspaceId,
+      }
+    );
+    if (!membership) {
+      // Проверяем доступ через shared entity
+      const effectiveAccess = await ctx.runQuery(
+        api.workspaces.getUserEffectiveAccess,
+        {
+          entityId: document.entityId,
+        }
+      );
+      if (!effectiveAccess) throw new Error("Access denied");
+    }
+
+    return document;
+  },
+});
+
+export const getDocumentsByEntity = query({
+  args: {
+    entityId: v.id("entities"),
+  },
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    // Проверяем доступ к entity через convex-workspaces
+    const entity = await ctx.db.get(args.entityId);
+    if (!entity) throw new Error("Entity not found");
+
+    const membership = await ctx.runQuery(
+      api.workspaces.getCurrentUserMembership,
+      {
+        workspaceId: entity.workspaceId,
+      }
+    );
+    if (!membership) {
+      // Проверяем доступ через shared entity
+      const effectiveAccess = await ctx.runQuery(
+        api.workspaces.getUserEffectiveAccess,
+        {
+          entityId: args.entityId,
+        }
+      );
+      if (!effectiveAccess) throw new Error("Access denied");
+    }
+
+    return await ctx.db
+      .query("documents")
+      .withIndex("by_entity", (q: any) => q.eq("entityId", args.entityId))
+      .collect();
+  },
+});
+
+export const getUserAccessibleDocuments = query({
+  args: {},
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    // Получаем все доступные entities через convex-workspaces
+    const accessibleEntities = await ctx.runQuery(
+      api.workspaces.getUserAccessibleEntities,
+      {}
+    );
+
+    const documents: {
+      userRole: any;
+      workspaceId: any;
+      _id: Id<"documents">;
+      _creationTime: number;
+      entityId: Id<"entities">;
+      title: string;
+    }[] = [];
+
+    for (const entity of accessibleEntities) {
+      const entityDocuments = await ctx.db
+        .query("documents")
+        .withIndex("by_entity", (q: any) => q.eq("entityId", entity._id))
+        .collect();
+
+      for (const document of entityDocuments) {
+        documents.push({
+          ...document,
+          userRole: entity.userRole,
+          workspaceId: entity.workspaceId,
+        });
+      }
+    }
+
+    return documents;
+  },
+});
