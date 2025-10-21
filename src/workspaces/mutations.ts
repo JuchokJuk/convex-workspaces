@@ -1,6 +1,6 @@
 import { mutationGeneric } from "convex/server";
 import { v } from "convex/values";
-import type { GenericMutationCtx, GenericDataModel } from "convex/server";
+import type { GenericMutationCtx, GenericDataModel, IdField } from "convex/server";
 import { getMembership } from "../utils/queries/getMembership";
 import { requirePermission } from "../utils/validation/requirePermission";
 import { requireWorkspace } from "../utils/validation/requireWorkspace";
@@ -18,8 +18,8 @@ export const createWorkspace = mutationGeneric({
     if (args.personal) {
       const existingPersonalWorkspace = await ctx.db
         .query("memberships")
-        .withIndex("by_user", (q: any) => q.eq("userId", userId))
-        .filter((q: any) => q.eq(q.field("userRole"), "admin"))
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .filter((q) => q.eq(q.field("userRole"), "admin"))
         .collect();
 
       // Проверяем, есть ли уже персональный воркспейс
@@ -70,10 +70,10 @@ export const updateWorkspace = mutationGeneric({
   },
 });
 
-export function assembleRemoveWorkspace(
+export function assembleRemoveWorkspace<T extends GenericDataModel>(
   onWorkspaceRemoved?: (
-    ctx: GenericMutationCtx<GenericDataModel>,
-    args: { entityIds: string[] }
+    ctx: GenericMutationCtx<T>,
+    args: { entityIds: IdField<"entities">["_id"][] }
   ) => Promise<void>
 ) {
   return mutationGeneric({

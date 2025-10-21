@@ -1,6 +1,6 @@
 import { mutationGeneric } from "convex/server";
 import { v } from "convex/values";
-import type { GenericMutationCtx, GenericDataModel } from "convex/server";
+import type { GenericMutationCtx, GenericDataModel, IdField } from "convex/server";
 import { getMembership } from "../utils/queries/getMembership";
 import { requirePermission } from "../utils/validation/requirePermission";
 import { requireEntity } from "../utils/validation/requireEntity";
@@ -27,10 +27,10 @@ export const createEntity = mutationGeneric({
   },
 });
 
-export function assembleRemoveEntity(
+export function assembleRemoveEntity<T extends GenericDataModel>(
   onEntityRemoved?: (
-    ctx: GenericMutationCtx<GenericDataModel>,
-    args: { entityId: string }
+    ctx: GenericMutationCtx<T>,
+    args: { entityId: IdField<"entities">["_id"] }
   ) => Promise<void>
 ) {
   return mutationGeneric({

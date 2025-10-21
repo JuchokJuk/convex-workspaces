@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { api } from "../_generated/api";
 import { requireAuth } from "../utils/requireAuth";
 import { Id } from "../_generated/dataModel";
+import { UserRole } from "../../src";
 
 export const getDocumentById = query({
   args: {
@@ -69,7 +70,7 @@ export const getDocumentsByEntity = query({
 
     return await ctx.db
       .query("documents")
-      .withIndex("by_entity", (q: any) => q.eq("entityId", args.entityId))
+      .withIndex("by_entity", (q) => q.eq("entityId", args.entityId))
       .collect();
   },
 });
@@ -86,8 +87,8 @@ export const getUserAccessibleDocuments = query({
     );
 
     const documents: {
-      userRole: any;
-      workspaceId: any;
+      userRole: UserRole;
+      workspaceId: Id<"workspaces">;
       _id: Id<"documents">;
       _creationTime: number;
       entityId: Id<"entities">;
@@ -97,7 +98,7 @@ export const getUserAccessibleDocuments = query({
     for (const entity of accessibleEntities) {
       const entityDocuments = await ctx.db
         .query("documents")
-        .withIndex("by_entity", (q: any) => q.eq("entityId", entity._id))
+        .withIndex("by_entity", (q) => q.eq("entityId", entity._id))
         .collect();
 
       for (const document of entityDocuments) {

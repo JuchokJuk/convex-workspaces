@@ -1,4 +1,5 @@
 import { convexWorkspaces } from "../src/index";
+import { DataModel } from "./_generated/dataModel";
 
 export const {
   // Workspaces
@@ -42,7 +43,7 @@ export const {
   checkEntityPermission,
   getUserRoleInWorkspace,
   getUserRoleForEntity,
-} = convexWorkspaces({
+} = convexWorkspaces<DataModel>({
   callbacks: {
     onWorkspaceRemoved: async (ctx, { entityIds }) => {
       // Удаляем все документы и задачи, связанные с удаленными entities
@@ -52,9 +53,9 @@ export const {
           .query("documents")
           .withIndex("by_entity", (q) => q.eq("entityId", entityId))
           .collect();
-        
+
         for (const document of documents) {
-          await ctx.db.delete(document._id as any);
+          await ctx.db.delete(document._id);
         }
 
         // Удаляем задачи
@@ -62,9 +63,9 @@ export const {
           .query("tasks")
           .withIndex("by_entity", (q) => q.eq("entityId", entityId))
           .collect();
-        
+
         for (const task of tasks) {
-          await ctx.db.delete(task._id as any);
+          await ctx.db.delete(task._id);
         }
       }
     },
@@ -74,18 +75,18 @@ export const {
         .query("documents")
         .withIndex("by_entity", (q) => q.eq("entityId", entityId))
         .collect();
-      
+
       for (const document of documents) {
-        await ctx.db.delete(document._id as any);
+        await ctx.db.delete(document._id);
       }
 
       const tasks = await ctx.db
         .query("tasks")
         .withIndex("by_entity", (q) => q.eq("entityId", entityId))
         .collect();
-      
+
       for (const task of tasks) {
-        await ctx.db.delete(task._id as any);
+        await ctx.db.delete(task._id);
       }
     },
   },

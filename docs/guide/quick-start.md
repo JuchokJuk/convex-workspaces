@@ -88,6 +88,7 @@ export async function setDefaultUserData(
 ```typescript
 // convex/workspaces.ts
 import { convexWorkspaces } from "convex-workspaces";
+import { DataModel } from "./_generated/dataModel";
 
 export const {
   // Workspaces
@@ -131,7 +132,7 @@ export const {
   checkEntityPermission,
   getUserRoleInWorkspace,
   getUserRoleForEntity,
-} = convexWorkspaces({
+} = convexWorkspaces<DataModel>({
   callbacks: {
     onWorkspaceRemoved: async (ctx, { entityIds }) => {
       // Your cleanup logic here

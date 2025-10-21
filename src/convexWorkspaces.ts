@@ -49,17 +49,29 @@ import {
   getUserRoleInWorkspace,
   getUserRoleForEntity,
 } from "./utils/permissions";
-import type { GenericMutationCtx, GenericDataModel } from "convex/server";
+import type {
+  GenericMutationCtx,
+  GenericDataModel,
+  IdField,
+} from "convex/server";
 
-export function convexWorkspaces({ 
-  callbacks 
-}: { 
-  callbacks?: { 
-    onWorkspaceRemoved?: (ctx: GenericMutationCtx<GenericDataModel>, args: { entityIds: string[] }) => Promise<void>,
-    onEntityRemoved?: (ctx: GenericMutationCtx<GenericDataModel>, args: { entityId: string }) => Promise<void>
-  } 
+export function convexWorkspaces<T extends GenericDataModel>({
+  callbacks,
+}: {
+  callbacks?: {
+    onWorkspaceRemoved?: (
+      ctx: GenericMutationCtx<T>,
+      args: { entityIds: IdField<"entities">["_id"][] }
+    ) => Promise<void>;
+    onEntityRemoved?: (
+      ctx: GenericMutationCtx<T>,
+      args: { entityId: IdField<"entities">["_id"] }
+    ) => Promise<void>;
+  };
 }) {
-  const removeWorkspace = assembleRemoveWorkspace(callbacks?.onWorkspaceRemoved);
+  const removeWorkspace = assembleRemoveWorkspace(
+    callbacks?.onWorkspaceRemoved
+  );
   const removeEntity = assembleRemoveEntity(callbacks?.onEntityRemoved);
 
   return {

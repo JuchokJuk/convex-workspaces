@@ -2,6 +2,8 @@ import { query } from "../_generated/server";
 import { v } from "convex/values";
 import { api } from "../_generated/api";
 import { requireAuth } from "../utils/requireAuth";
+import { UserRole } from "../../src/types";
+import { Id } from "../_generated/dataModel";
 
 export const getTaskById = query({
   args: {
@@ -50,7 +52,7 @@ export const getTasksByEntity = query({
 
     return await ctx.db
       .query("tasks")
-      .withIndex("by_entity", (q: any) => q.eq("entityId", args.entityId))
+      .withIndex("by_entity", (q) => q.eq("entityId", args.entityId))
       .collect();
   },
 });
@@ -61,16 +63,23 @@ export const getUserAccessibleTasks = query({
     await requireAuth(ctx);
 
     // Получаем все доступные entities через convex-workspaces
-    const accessibleEntities: any = await ctx.runQuery(
+    const accessibleEntities = await ctx.runQuery(
       api.workspaces.getUserAccessibleEntities,
       {}
     );
 
-    const tasks = [];
+    const tasks: {
+      _id: Id<"tasks">;
+      _creationTime: number;
+      entityId: Id<"entities">;
+      userRole: UserRole;
+      workspaceId: Id<"workspaces">;
+    }[] = [];
+
     for (const entity of accessibleEntities) {
       const entityTasks = await ctx.db
         .query("tasks")
-        .withIndex("by_entity", (q: any) => q.eq("entityId", entity._id))
+        .withIndex("by_entity", (q) => q.eq("entityId", entity._id))
         .collect();
 
       for (const task of entityTasks) {

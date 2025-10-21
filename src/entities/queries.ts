@@ -1,9 +1,10 @@
-import { queryGeneric } from "convex/server";
+import { IdField, queryGeneric } from "convex/server";
 import { v } from "convex/values";
 import { getMembership } from "../utils/queries/getMembership";
 import { getEntityAccess } from "../utils/queries/getEntityAccess";
 import { requireAuth } from "../utils/validation/requireAuth";
 import { getEffectiveAccess } from "../utils/permissions/getEffectiveAccess";
+import { UserRole } from "../types";
 
 export const getEntityById = queryGeneric({
   args: { entityId: v.id("entities") },
@@ -16,7 +17,7 @@ export const getEntityById = queryGeneric({
     const membership = await getMembership(ctx, entity.workspaceId, userId);
     if (!membership) {
       const entityAccess = await getEntityAccess(ctx, args.entityId);
-      const hasAccess = entityAccess.some((access: any) =>
+      const hasAccess = entityAccess.some((access) =>
         getMembership(ctx, access.workspaceId, userId)
       );
       if (!hasAccess) throw new Error("Access denied");
@@ -61,7 +62,7 @@ export const checkEntityAccess = queryGeneric({
       let hasSharedAccess = false;
       
       for (const access of entityAccess) {
-        const membership = await getMembership(ctx, access.workspaceId as any, currentUserId);
+        const membership = await getMembership(ctx, access.workspaceId, currentUserId);
         if (membership) {
           hasSharedAccess = true;
           break;
@@ -85,7 +86,7 @@ export const checkEntityAccess = queryGeneric({
     for (const access of entityAccess) {
       const userMembership = await getMembership(
         ctx,
-        access.workspaceId as any,
+        access.workspaceId,
         args.userId
       );
       if (userMembership) return true;
@@ -117,7 +118,12 @@ export const getUserAccessibleEntities = queryGeneric({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .collect();
 
-    const accessibleEntities = [];
+    const accessibleEntities: {
+      _id: IdField<"entities">["_id"];
+      _creationTime: number;
+      workspaceId: IdField<"workspaces">["_id"];
+      userRole: UserRole;
+    }[] = [];
 
     for (const membership of memberships) {
       const entities = await ctx.db

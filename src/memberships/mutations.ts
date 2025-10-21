@@ -1,4 +1,4 @@
-import { mutationGeneric, queryGeneric } from "convex/server";
+import { IdField, mutationGeneric, queryGeneric } from "convex/server";
 import { v } from "convex/values";
 import { getMembership } from "../utils/queries/getMembership";
 import { requirePermission } from "../utils/validation/requirePermission";
@@ -119,6 +119,6 @@ export const removeUserFromWorkspace = mutationGeneric({
     const membership = await getMembership(ctx, args.workspaceId, args.userId);
     if (!membership || !membership._id) throw new Error("Membership not found");
 
-    await ctx.db.delete(membership._id as any);
+    await ctx.db.delete(membership._id as IdField<"memberships">["_id"]);
   },
 });
