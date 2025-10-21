@@ -5,7 +5,7 @@ Get up and running with Convex Workspaces in minutes.
 ## Installation
 
 ```bash
-npm install convex-workspaces
+pnpm i convex-workspaces
 ```
 
 ## Basic Setup
