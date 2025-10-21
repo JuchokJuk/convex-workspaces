@@ -1,47 +1,7 @@
-import {
-  createWorkspace,
-  updateWorkspace,
-  assembleRemoveWorkspace,
-} from "./workspaces/mutations";
-import {
-  getWorkspaceById,
-  getWorkspacesByOwner,
-  getPersonalWorkspace,
-  getUserWorkspaces,
-} from "./workspaces/queries";
-
-import {
-  createMembership,
-  updateMembershipRole,
-  removeMembership,
-  removeUserFromWorkspace,
-} from "./memberships/mutations";
-import {
-  getMembershipByWorkspaceAndUser,
-  getMembershipsByWorkspace,
-  getMembershipsByUser,
-  getCurrentUserMembership,
-} from "./memberships/queries";
-
-import { createEntity, assembleRemoveEntity } from "./entities/mutations";
-import {
-  getEntityById,
-  getEntitiesByWorkspace,
-  checkEntityAccess,
-  getUserAccessibleEntities,
-} from "./entities/queries";
-
-import {
-  createEntityAccess,
-  updateEntityAccessLevel,
-  removeEntityAccess,
-} from "./entityAccess/mutations";
-import {
-  getEntityAccessByEntityAndWorkspace,
-  getEntityAccessByEntity,
-  getEntityAccessByWorkspace,
-  getUserEffectiveAccess,
-} from "./entityAccess/queries";
+import { workspaces, type OnWorkspaceRemovedCallback } from "./workspaces";
+import { memberships } from "./memberships";
+import { entities, type OnEntityRemovedCallback } from "./entities";
+import { entityAccess } from "./entityAccess";
 
 import {
   checkUserPermission,
@@ -49,72 +9,44 @@ import {
   getUserRoleInWorkspace,
   getUserRoleForEntity,
 } from "./utils/permissions";
-import type {
-  GenericMutationCtx,
-  GenericDataModel,
-  IdField,
-} from "convex/server";
 
-export function convexWorkspaces<T extends GenericDataModel>({
+export function convexWorkspaces({
   callbacks,
 }: {
   callbacks?: {
-    onWorkspaceRemoved?: (
-      ctx: GenericMutationCtx<T>,
-      args: { entityIds: IdField<"entities">["_id"][] }
-    ) => Promise<void>;
-    onEntityRemoved?: (
-      ctx: GenericMutationCtx<T>,
-      args: { entityId: IdField<"entities">["_id"] }
-    ) => Promise<void>;
+    onWorkspaceRemoved?: OnWorkspaceRemovedCallback;
+    onEntityRemoved?: OnEntityRemovedCallback;
   };
 }) {
-  const removeWorkspace = assembleRemoveWorkspace(
+  const removeWorkspace = workspaces.functions.assembleRemoveWorkspace(
     callbacks?.onWorkspaceRemoved
   );
-  const removeEntity = assembleRemoveEntity(callbacks?.onEntityRemoved);
+  const removeEntity = entities.functions.assembleRemoveEntity(
+    callbacks?.onEntityRemoved
+  );
 
   return {
-    // Workspaces
-    createWorkspace,
-    updateWorkspace,
+    ...workspaces.functions,
     removeWorkspace,
-    getWorkspaceById,
-    getWorkspacesByOwner,
-    getPersonalWorkspace,
-    getUserWorkspaces,
 
-    // Memberships
-    createMembership,
-    updateMembershipRole,
-    removeMembership,
-    removeUserFromWorkspace,
-    getMembershipByWorkspaceAndUser,
-    getMembershipsByWorkspace,
-    getMembershipsByUser,
-    getCurrentUserMembership,
+    ...memberships.functions,
 
-    // Entities
-    createEntity,
+    ...entities.functions,
     removeEntity,
-    getEntityById,
-    getEntitiesByWorkspace,
-    checkEntityAccess,
-    getUserAccessibleEntities,
 
-    // Entity Access
-    createEntityAccess,
-    updateEntityAccessLevel,
-    removeEntityAccess,
-    getEntityAccessByEntityAndWorkspace,
-    getEntityAccessByEntity,
-    getEntityAccessByWorkspace,
-    getUserEffectiveAccess,
+    ...entityAccess.functions,
 
     // Permissions
     checkUserPermission,
     checkEntityPermission,
     getUserRoleInWorkspace,
     getUserRoleForEntity,
+
+    handlers: {
+      ...workspaces.handlers,
+      ...memberships.handlers,
+      ...entities.handlers,
+      ...entityAccess.handlers,
+    },
   };
 }

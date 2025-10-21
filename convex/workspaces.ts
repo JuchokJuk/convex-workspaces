@@ -1,5 +1,6 @@
 import { convexWorkspaces } from "../src/index";
 import { DataModel } from "./_generated/dataModel";
+import { MutationCtx } from "./_generated/server";
 
 export const {
   // Workspaces
@@ -43,9 +44,9 @@ export const {
   checkEntityPermission,
   getUserRoleInWorkspace,
   getUserRoleForEntity,
-} = convexWorkspaces<DataModel>({
+} = convexWorkspaces({
   callbacks: {
-    onWorkspaceRemoved: async (ctx, { entityIds }) => {
+    onWorkspaceRemoved: async (ctx: MutationCtx, { entityIds }) => {
       // Удаляем все документы и задачи, связанные с удаленными entities
       for (const entityId of entityIds) {
         // Удаляем документы
@@ -69,7 +70,7 @@ export const {
         }
       }
     },
-    onEntityRemoved: async (ctx, { entityId }) => {
+    onEntityRemoved: async (ctx: MutationCtx, { entityId }) => {
       // Удаляем все документы и задачи, связанные с удаленной entity
       const documents = await ctx.db
         .query("documents")

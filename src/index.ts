@@ -3,21 +3,18 @@ export { convexWorkspaces } from "./convexWorkspaces";
 export { initializePersonalWorkspace } from "./utils/initializePersonalWorkspace";
 
 // Export schemas
-import { workspaces } from "./workspaces/schema";
-import { memberships } from "./memberships/schema";
-import { entities } from "./entities/schema";
-import { entityAccess } from "./entityAccess/schema";
+import { workspaces } from "./workspaces";
+import { memberships } from "./memberships";
+import { entities } from "./entities";
+import { entityAccess } from "./entityAccess";
 
 // Combined schema for easy import
 export const workspacesTables = {
-  workspaces,
-  memberships,
-  entities,
-  entityAccess,
+  workspaces: workspaces.schema,
+  memberships: memberships.schema,
+  entities: entities.schema,
+  entityAccess: entityAccess.schema,
 };
 
 // Export types
-export type {
-  UserRole,
-  ProjectAccessLevel,
-} from "./types";
+export type { UserRole, ProjectAccessLevel } from "./types";
