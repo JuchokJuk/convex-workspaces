@@ -15,6 +15,11 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
   let memberClient: ConvexHttpClient;
   let outsiderClient: ConvexHttpClient;
 
+  // Реальные ID пользователей из auth
+  let ownerUserId: string;
+  let memberUserId: string;
+  let outsiderUserId: string;
+
   beforeEach(async () => {
     // Очищаем базу данных перед каждым тестом
     await clearDatabase();
@@ -23,6 +28,15 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
     ownerClient = await createSignedClient();
     memberClient = await createSignedClient();
     outsiderClient = await createSignedClient();
+
+    // Получаем реальные ID пользователей из их персональных воркспейсов
+    const ownerPersonalWorkspace = await ownerClient.query(api.workspaces.getPersonalWorkspace, {});
+    const memberPersonalWorkspace = await memberClient.query(api.workspaces.getPersonalWorkspace, {});
+    const outsiderPersonalWorkspace = await outsiderClient.query(api.workspaces.getPersonalWorkspace, {});
+
+    ownerUserId = ownerPersonalWorkspace?.ownerId || "";
+    memberUserId = memberPersonalWorkspace?.ownerId || "";
+    outsiderUserId = outsiderPersonalWorkspace?.ownerId || "";
   });
 
   describe("Entity Sharing Security", () => {
@@ -33,9 +47,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
       // Создаем entity в исходном воркспейсе
@@ -72,6 +93,13 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
       const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient как viewer в исходный воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: sourceWorkspaceId,
+        userId: memberUserId,
+        userRole: "viewer",
       });
 
       // Создаем entity
@@ -118,9 +146,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
       // Создаем entity
@@ -154,9 +189,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс как viewer
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "viewer",
       });
 
       // Создаем entity
@@ -187,9 +229,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
       // Создаем entity
@@ -219,9 +268,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс как editor
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
       // Создаем entity
@@ -253,9 +309,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
       // Создаем entity
@@ -292,9 +355,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
       // Создаем entity
@@ -329,9 +399,16 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
+      });
+
+      // Добавляем memberClient в целевой воркспейс как editor (не admin)
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
       // Создаем entity
@@ -363,20 +440,31 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Target Workspace",
         personal: false,
       });
 
-      // Создаем entity в исходном воркспейсе
-      const entityId = await ownerClient.mutation(api.workspaces.createEntity, {
-        workspaceId: sourceWorkspaceId,
+      // Добавляем memberClient в целевой воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
       });
 
-      // Создаем документ для этой entity
-      const documentId = await ownerClient.mutation(api.documents.mutations.createDocument, {
-        entityId,
+      // Создаем документ с entity в исходном воркспейсе
+      const documentResult = await ownerClient.mutation(api.documents.mutations.createDocument, {
+        workspaceId: sourceWorkspaceId,
         title: "Shared Document",
+      });
+
+      const documentId = documentResult.documentId;
+      const entityId = documentResult.entityId;
+
+      // Создаем задачу для той же entity
+      const taskId = await ownerClient.mutation(api.tasks.mutations.createTaskForEntity, {
+        entityId,
+        title: "Shared Task",
       });
 
       // Шерим entity в целевой воркспейс
@@ -393,10 +481,137 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
 
       expect(document).toBeDefined();
       expect(document?.title).toBe("Shared Document");
+
+      // Проверяем, что задача тоже доступна из целевого воркспейса
+      const task = await memberClient.query(api.tasks.queries.getTaskById, {
+        taskId,
+      });
+
+      expect(task).toBeDefined();
+      expect(task?.title).toBe("Shared Task");
     });
 
-    it("should not allow accessing tasks from shared entity (tasks are workspace-only)", async () => {
-      // Создаем два воркспейса
+  });
+
+  describe("Critical Security Vulnerabilities", () => {
+    it("should not allow privilege escalation through accessLevel", async () => {
+      // Создаем воркспейс с пользователем-редактором
+      const sourceWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
+        name: "Source Workspace",
+        personal: false,
+      });
+
+      // Добавляем memberClient как editor (не admin!)
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: sourceWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor", // ← Только editor, не admin!
+      });
+
+      // Создаем целевой воркспейс, где memberClient тоже editor (не admin!)
+      const targetWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
+        name: "Target Workspace",
+        personal: false,
+      });
+
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: targetWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor", // ← Только editor, не admin!
+      });
+
+      // Создаем entity в исходном воркспейсе
+      const entityId = await memberClient.mutation(api.workspaces.createEntity, {
+        workspaceId: sourceWorkspaceId,
+      });
+
+      // Пытаемся поделиться с accessLevel "admin" (больше чем "editor")
+      // Должно быть ограничено до "editor"
+      const entityAccessId = await memberClient.mutation(api.workspaces.createEntityAccess, {
+        workspaceId: targetWorkspaceId,
+        entityId,
+        accessLevel: "admin", // ← Должно быть ограничено до "editor"
+      });
+
+      expect(entityAccessId).toBeDefined();
+
+      // Проверяем, что фактически создан accessLevel "editor", а не "admin"
+      const entityAccess = await memberClient.query(api.workspaces.getEntityAccessByEntity, {
+        entityId,
+      });
+
+      expect(entityAccess).toHaveLength(1);
+      expect(entityAccess[0].accessLevel).toBe("editor"); // ← Должно быть ограничено!
+    });
+
+    it("should not allow sharing entity to team workspace where user has no rights", async () => {
+      // Создаем командный воркспейс, где outsiderClient НЕ является членом
+      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+        name: "Target Team Workspace",
+        personal: false,
+      });
+
+      // Создаем entity в своем воркспейсе
+      const sourceWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
+        name: "Source Workspace",
+        personal: false,
+      });
+
+      // Добавляем outsiderClient в исходный воркспейс как editor
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: sourceWorkspaceId,
+        userId: outsiderUserId,
+        userRole: "editor",
+      });
+
+      const entityId = await ownerClient.mutation(api.workspaces.createEntity, {
+        workspaceId: sourceWorkspaceId,
+      });
+
+      // Пытаемся поделиться entity в командный воркспейс, где нет прав
+      await expect(
+        outsiderClient.mutation(api.workspaces.createEntityAccess, {
+          workspaceId: targetWorkspaceId,
+          entityId,
+          accessLevel: "editor",
+        })
+      ).rejects.toThrow("Insufficient permissions for sharing entities to this workspace");
+    });
+
+    it("should allow sharing entity to personal workspace without membership", async () => {
+      // Создаем entity в своем воркспейсе
+      const sourceWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
+        name: "Source Workspace",
+        personal: false,
+      });
+
+      // Добавляем outsiderClient как editor в исходный воркспейс
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: sourceWorkspaceId,
+        userId: outsiderUserId,
+        userRole: "editor",
+      });
+
+      const entityId = await ownerClient.mutation(api.workspaces.createEntity, {
+        workspaceId: sourceWorkspaceId,
+      });
+
+      // Получаем персональный воркспейс outsiderClient
+      const outsiderPersonalWorkspace = await outsiderClient.query(api.workspaces.getPersonalWorkspace, {});
+      const targetWorkspaceId = outsiderPersonalWorkspace!._id;
+
+      // Должно быть разрешено поделиться в персональный воркспейс
+      const entityAccessId = await outsiderClient.mutation(api.workspaces.createEntityAccess, {
+        workspaceId: targetWorkspaceId,
+        entityId,
+        accessLevel: "editor",
+      });
+
+      expect(entityAccessId).toBeDefined();
+    });
+
+    it("should not allow viewer to share entities with any access level", async () => {
+      // Создаем воркспейс
       const sourceWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
         name: "Source Workspace",
         personal: false,
@@ -407,30 +622,68 @@ describe("Convex Workspaces - Entity Sharing & Security Tests", () => {
         personal: false,
       });
 
-      // Создаем entity в исходном воркспейсе
+      // Добавляем memberClient как viewer
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: sourceWorkspaceId,
+        userId: memberUserId,
+        userRole: "viewer",
+      });
+
+      // Создаем entity
       const entityId = await ownerClient.mutation(api.workspaces.createEntity, {
         workspaceId: sourceWorkspaceId,
       });
 
-      // Создаем задачу для этой entity
-      const taskId = await ownerClient.mutation(api.tasks.mutations.createTask, {
-        entityId,
-        title: "Private Task",
+      // Viewer не должен иметь возможность шерить entity вообще
+      await expect(
+        memberClient.mutation(api.workspaces.createEntityAccess, {
+          workspaceId: targetWorkspaceId,
+          entityId,
+          accessLevel: "viewer", // ← Даже viewer права не должны быть доступны
+        })
+      ).rejects.toThrow("Insufficient permissions");
+    });
+
+    it("should limit accessLevel to user's own permissions", async () => {
+      // Создаем воркспейс с пользователем-редактором
+      const sourceWorkspaceId = await ownerClient.mutation(api.workspaces.createWorkspace, {
+        name: "Source Workspace",
+        personal: false,
       });
 
-      // Шерим entity в целевой воркспейс
-      await ownerClient.mutation(api.workspaces.createEntityAccess, {
+      // Добавляем memberClient как editor
+      await ownerClient.mutation(api.workspaces.createMembership, {
+        workspaceId: sourceWorkspaceId,
+        userId: memberUserId,
+        userRole: "editor",
+      });
+
+      const targetWorkspaceId = await memberClient.mutation(api.workspaces.createWorkspace, {
+        name: "Target Workspace",
+        personal: false,
+      });
+
+      // Создаем entity
+      const entityId = await memberClient.mutation(api.workspaces.createEntity, {
+        workspaceId: sourceWorkspaceId,
+      });
+
+      // Пытаемся поделиться с accessLevel "admin" - должно быть ограничено до "editor"
+      const entityAccessId = await memberClient.mutation(api.workspaces.createEntityAccess, {
         workspaceId: targetWorkspaceId,
         entityId,
-        accessLevel: "editor",
+        accessLevel: "admin", // ← Должно быть ограничено до "editor"
       });
 
-      // Проверяем, что задача НЕ доступна из целевого воркспейса
-      await expect(
-        memberClient.query(api.tasks.queries.getTaskById, {
-          taskId,
-        })
-      ).rejects.toThrow();
+      expect(entityAccessId).toBeDefined();
+
+      // Проверяем, что фактически создан accessLevel "editor", а не "admin"
+      const entityAccess = await memberClient.query(api.workspaces.getEntityAccessByEntity, {
+        entityId,
+      });
+
+      expect(entityAccess).toHaveLength(1);
+      expect(entityAccess[0].accessLevel).toBe("editor"); // ← Должно быть ограничено!
     });
   });
 });

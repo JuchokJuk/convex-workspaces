@@ -16,6 +16,8 @@ import type * as setDefaultUserData from "../setDefaultUserData.js";
 import type * as tasks_mutations from "../tasks/mutations.js";
 import type * as tasks_queries from "../tasks/queries.js";
 import type * as users_queries from "../users/queries.js";
+import type * as utils_accessControl from "../utils/accessControl.js";
+import type * as utils_index from "../utils/index.js";
 import type * as utils_requireAuth from "../utils/requireAuth.js";
 import type * as utils_test from "../utils/test.js";
 import type * as workspaces from "../workspaces.js";
@@ -43,6 +45,8 @@ declare const fullApi: ApiFromModules<{
   "tasks/mutations": typeof tasks_mutations;
   "tasks/queries": typeof tasks_queries;
   "users/queries": typeof users_queries;
+  "utils/accessControl": typeof utils_accessControl;
+  "utils/index": typeof utils_index;
   "utils/requireAuth": typeof utils_requireAuth;
   "utils/test": typeof utils_test;
   workspaces: typeof workspaces;

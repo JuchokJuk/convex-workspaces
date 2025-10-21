@@ -15,6 +15,9 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
   let editorClient: ConvexHttpClient;
   let viewerClient: ConvexHttpClient;
 
+  // Реальные ID пользователей из auth
+  let editorUserId: string;
+
   beforeEach(async () => {
     // Очищаем базу данных перед каждым тестом
     await clearDatabase();
@@ -23,6 +26,10 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
     adminClient = await createSignedClient();
     editorClient = await createSignedClient();
     viewerClient = await createSignedClient();
+
+    // Получаем реальный ID пользователя editorClient
+    const editorPersonalWorkspace = await editorClient.query(api.workspaces.getPersonalWorkspace, {});
+    editorUserId = editorPersonalWorkspace?.ownerId || "";
   });
 
   describe("Workspace Permissions", () => {
@@ -86,7 +93,7 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
       });
 
       // Создаем документ в первом воркспейсе
-      const result = await adminClient.mutation(api.documents.mutations.createDocumentWithEntity, {
+      const result = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId: workspace1Id,
         title: "Shared Document",
       });
@@ -112,7 +119,7 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
         personal: false,
       });
 
-      const result = await adminClient.mutation(api.documents.mutations.createDocumentWithEntity, {
+      const result = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
         title: "Private Document",
       });
@@ -127,28 +134,42 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
   });
 
   describe("Task Access Control", () => {
-    it("should not allow sharing tasks (tasks are workspace-only)", async () => {
-      // Создаем два обычных воркспейса (персональные уже существуют)
+    it("should allow sharing tasks between workspaces", async () => {
+      // Создаем два воркспейса
       const workspace1Id = await adminClient.mutation(api.workspaces.createWorkspace, {
         name: "Workspace 1",
         personal: false,
       });
 
-      const workspace2Id = await editorClient.mutation(api.workspaces.createWorkspace, {
+      const workspace2Id = await adminClient.mutation(api.workspaces.createWorkspace, {
         name: "Workspace 2",
         personal: false,
       });
 
-      // Создаем задачу в первом воркспейсе
-      const result = await adminClient.mutation(api.tasks.mutations.createTaskWithEntity, {
-        workspaceId: workspace1Id,
-        title: "Private Task",
+      // Добавляем editorClient во второй воркспейс
+      await adminClient.mutation(api.workspaces.createMembership, {
+        workspaceId: workspace2Id,
+        userId: editorUserId as any,
+        userRole: "editor",
       });
 
-      // Задача не должна быть доступна во втором воркспейсе
-      const accessibleTasks = await editorClient.query(api.tasks.queries.getUserAccessibleTasks, {});
+      // Создаем задачу в первом воркспейсе
+      const result = await adminClient.mutation(api.tasks.mutations.createTask, {
+        workspaceId: workspace1Id,
+        title: "Shared Task",
+      });
 
-      expect(accessibleTasks).toHaveLength(0);
+      // Шерим entity с задачей во второй воркспейс
+      await adminClient.mutation(api.workspaces.createEntityAccess, {
+        workspaceId: workspace2Id,
+        entityId: result.entityId,
+        accessLevel: "editor",
+      });
+
+      // Задача должна быть доступна во втором воркспейсе
+      const accessibleTasks = await editorClient.query(api.tasks.queries.getUserAccessibleTasks, {});
+      expect(accessibleTasks).toHaveLength(1);
+      expect(accessibleTasks[0].title).toBe("Shared Task");
     });
 
     it("should allow workspace members to access tasks", async () => {
@@ -159,7 +180,7 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
       });
 
       // Создаем задачу
-      const result = await adminClient.mutation(api.tasks.mutations.createTaskWithEntity, {
+      const result = await adminClient.mutation(api.tasks.mutations.createTask, {
         workspaceId,
         title: "Team Task",
       });
@@ -188,7 +209,7 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
       });
 
       // Создаем документ
-      const result = await adminClient.mutation(api.documents.mutations.createDocumentWithEntity, {
+      const result = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId: workspace1Id,
         title: "Shared Document",
       });
@@ -216,7 +237,7 @@ describe("Convex Workspaces - Permissions & Sharing Tests", () => {
         personal: false,
       });
 
-      const result = await adminClient.mutation(api.documents.mutations.createDocumentWithEntity, {
+      const result = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
         title: "Test Document",
       });

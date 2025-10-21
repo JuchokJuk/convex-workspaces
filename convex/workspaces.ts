@@ -9,6 +9,7 @@ export const {
   getWorkspaceById,
   getWorkspacesByOwner,
   getPersonalWorkspace,
+  getPersonalWorkspaceByUserId,
   getUserWorkspaces,
 
   // Memberships

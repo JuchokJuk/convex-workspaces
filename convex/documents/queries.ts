@@ -4,6 +4,7 @@ import { requireAuth } from "../utils/requireAuth";
 import { Id } from "../_generated/dataModel";
 import { UserRole } from "../../src";
 import { workspaces } from "../workspaces";
+import { checkEntityAccess } from "../utils/accessControl";
 
 export const getDocumentById = query({
   args: {
@@ -16,22 +17,7 @@ export const getDocumentById = query({
     if (!document) return null;
 
     // Проверяем доступ к entity через convex-workspaces
-    const entity = await ctx.db.get(document.entityId);
-    if (!entity) throw new Error("Entity not found");
-
-    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
-      workspaceId: entity.workspaceId,
-    });
-    if (!membership) {
-      // Проверяем доступ через shared entity
-      const effectiveAccess = await workspaces.getUserEffectiveAccessHandler(
-        ctx,
-        {
-          entityId: document.entityId,
-        }
-      );
-      if (!effectiveAccess) throw new Error("Access denied");
-    }
+    await checkEntityAccess(ctx, document.entityId);
 
     return document;
   },
@@ -45,22 +31,7 @@ export const getDocumentsByEntity = query({
     await requireAuth(ctx);
 
     // Проверяем доступ к entity через convex-workspaces
-    const entity = await ctx.db.get(args.entityId);
-    if (!entity) throw new Error("Entity not found");
-
-    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
-      workspaceId: entity.workspaceId,
-    });
-    if (!membership) {
-      // Проверяем доступ через shared entity
-      const effectiveAccess = await workspaces.getUserEffectiveAccessHandler(
-        ctx,
-        {
-          entityId: args.entityId,
-        }
-      );
-      if (!effectiveAccess) throw new Error("Access denied");
-    }
+    await checkEntityAccess(ctx, args.entityId);
 
     return await ctx.db
       .query("documents")
@@ -75,8 +46,7 @@ export const getUserAccessibleDocuments = query({
     await requireAuth(ctx);
 
     // Получаем все доступные entities через convex-workspaces
-    const accessibleEntities =
-      await workspaces.getUserAccessibleEntitiesHandler(ctx);
+    const accessibleEntities = await workspaces.getUserAccessibleEntitiesHandler(ctx);
 
     const documents: {
       userRole: UserRole;

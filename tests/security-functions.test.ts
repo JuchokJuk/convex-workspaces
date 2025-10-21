@@ -92,6 +92,16 @@ describe("Convex Workspaces - Security Functions Tests", () => {
         personal: false,
       });
 
+      // Добавляем ownerClient в member воркспейс
+      const ownerPersonalWorkspace = await ownerClient.query(api.workspaces.getPersonalWorkspace, {});
+      const ownerUserId = ownerPersonalWorkspace?.ownerId || "";
+
+      await memberClient.mutation(api.workspaces.createMembership, {
+        workspaceId: memberWorkspaceId,
+        userId: ownerUserId as any,
+        userRole: "editor",
+      });
+
       // Owner делится entity с member воркспейсом
       await ownerClient.mutation(api.workspaces.createEntityAccess, {
         workspaceId: memberWorkspaceId,

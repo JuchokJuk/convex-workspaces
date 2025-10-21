@@ -122,7 +122,7 @@ describe("Convex Workspaces - Basic Tests", () => {
       });
 
       // Создаем документ с entity через action
-      const result = await client1.mutation(api.documents.mutations.createDocumentWithEntity, {
+      const result = await client1.mutation(api.documents.mutations.createDocument, {
         workspaceId,
         title: "Test Document",
       });
@@ -148,7 +148,7 @@ describe("Convex Workspaces - Basic Tests", () => {
         personal: false,
       });
 
-      const result = await client1.mutation(api.documents.mutations.createDocumentWithEntity, {
+      const result = await client1.mutation(api.documents.mutations.createDocument, {
         workspaceId,
         title: "Test Document",
       });
@@ -172,7 +172,7 @@ describe("Convex Workspaces - Basic Tests", () => {
       });
 
       // Создаем задачу с entity через action
-      const result = await client1.mutation(api.tasks.mutations.createTaskWithEntity, {
+      const result = await client1.mutation(api.tasks.mutations.createTask, {
         workspaceId,
         title: "Test Task",
       });
@@ -198,7 +198,7 @@ describe("Convex Workspaces - Basic Tests", () => {
         personal: false,
       });
 
-      const result = await client1.mutation(api.tasks.mutations.createTaskWithEntity, {
+      const result = await client1.mutation(api.tasks.mutations.createTask, {
         workspaceId,
         title: "Test Task",
       });

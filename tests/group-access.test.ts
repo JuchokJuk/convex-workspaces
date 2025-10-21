@@ -164,16 +164,14 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
         personal: false,
       });
 
-      // Создаем entity в воркспейсе
-      const entityId = await adminClient.mutation(api.workspaces.createEntity, {
+      // Создаем документ с entity в воркспейсе
+      const documentResult = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
-      });
-
-      // Создаем документ для entity
-      const documentId = await adminClient.mutation(api.documents.mutations.createDocument, {
-        entityId,
         title: "Team Document",
       });
+
+      const entityId = documentResult.entityId;
+      const documentId = documentResult.documentId;
 
       // Все члены воркспейса должны иметь доступ к entity
       const adminAccess = await adminClient.query(api.workspaces.getUserEffectiveAccess, {
@@ -196,16 +194,14 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
         personal: false,
       });
 
-      // Создаем entity в воркспейсе
-      const entityId = await adminClient.mutation(api.workspaces.createEntity, {
+      // Создаем документ с entity в воркспейсе
+      const documentResult = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
-      });
-
-      // Создаем документ для entity
-      const documentId = await adminClient.mutation(api.documents.mutations.createDocument, {
-        entityId,
         title: "Private Document",
       });
+
+      const entityId = documentResult.entityId;
+      const documentId = documentResult.documentId;
 
       // Посторонний пользователь не должен иметь доступ к entity
       const outsiderAccess = await outsiderClient.query(api.workspaces.getUserEffectiveAccess, {
@@ -228,25 +224,19 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
         personal: false,
       });
 
-      // Создаем несколько entities
-      const entity1Id = await adminClient.mutation(api.workspaces.createEntity, {
+      // Создаем документы с entities
+      const document1Result = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
-      });
-
-      const entity2Id = await adminClient.mutation(api.workspaces.createEntity, {
-        workspaceId,
-      });
-
-      // Создаем документы для entities
-      await adminClient.mutation(api.documents.mutations.createDocument, {
-        entityId: entity1Id,
         title: "Document 1",
       });
 
-      await adminClient.mutation(api.documents.mutations.createDocument, {
-        entityId: entity2Id,
+      const document2Result = await adminClient.mutation(api.documents.mutations.createDocument, {
+        workspaceId,
         title: "Document 2",
       });
+
+      const entity1Id = document1Result.entityId;
+      const entity2Id = document2Result.entityId;
 
       // Админ должен видеть все entities в воркспейсе
       const accessibleEntities = await adminClient.query(api.workspaces.getUserAccessibleEntities, {});
@@ -394,16 +384,13 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
         userRole: "editor",
       });
 
-      // Создаем entity
-      const entityId = await adminClient.mutation(api.workspaces.createEntity, {
+      // Редактор должен иметь возможность создать документ с entity
+      const documentResult = await editorClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
-      });
-
-      // Редактор должен иметь возможность создать документ
-      const documentId = await editorClient.mutation(api.documents.mutations.createDocument, {
-        entityId,
         title: "Editor Document",
       });
+
+      const documentId = documentResult.documentId;
 
       expect(documentId).toBeDefined();
 
@@ -430,15 +417,14 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
         userRole: "viewer",
       });
 
-      // Создаем entity и документ
-      const entityId = await adminClient.mutation(api.workspaces.createEntity, {
+      // Создаем документ с entity
+      const documentResult = await adminClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
-      });
-
-      const documentId = await adminClient.mutation(api.documents.mutations.createDocument, {
-        entityId,
         title: "Viewer Document",
       });
+
+      const entityId = documentResult.entityId;
+      const documentId = documentResult.documentId;
 
       // Зритель должен иметь возможность читать документ
       const document = await viewerClient.query(api.documents.queries.getDocumentById, {
@@ -446,10 +432,10 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
       });
       expect(document?.title).toBe("Viewer Document");
 
-      // Зритель не должен иметь возможность создать документ
+      // Зритель не должен иметь возможность создать документ с entity
       await expect(
         viewerClient.mutation(api.documents.mutations.createDocument, {
-          entityId,
+          workspaceId,
           title: "New Document",
         })
       ).rejects.toThrow();
@@ -471,16 +457,13 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
         userRole: "editor",
       });
 
-      // Создаем entity
-      const entityId = await adminClient.mutation(api.workspaces.createEntity, {
+      // Редактор создает документ с entity
+      const documentResult = await editorClient.mutation(api.documents.mutations.createDocument, {
         workspaceId,
-      });
-
-      // Редактор создает документ
-      const documentId = await editorClient.mutation(api.documents.mutations.createDocument, {
-        entityId,
         title: "Original Title",
       });
+
+      const documentId = documentResult.documentId;
 
       // Админ должен иметь возможность обновить документ
       await adminClient.mutation(api.documents.mutations.updateDocument, {
