@@ -1,9 +1,9 @@
 import { query } from "../_generated/server";
 import { v } from "convex/values";
-import { api } from "../_generated/api";
 import { requireAuth } from "../utils/requireAuth";
 import { UserRole } from "../../src/types";
 import { Id } from "../_generated/dataModel";
+import { workspaces } from "../workspaces";
 
 export const getTaskById = query({
   args: {
@@ -19,12 +19,9 @@ export const getTaskById = query({
     const entity = await ctx.db.get(task.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const membership = await ctx.runQuery(
-      api.workspaces.getCurrentUserMembership,
-      {
-        workspaceId: entity.workspaceId,
-      }
-    );
+    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
+      workspaceId: entity.workspaceId,
+    });
     if (!membership) throw new Error("Access denied - tasks cannot be shared");
 
     return task;
@@ -42,12 +39,9 @@ export const getTasksByEntity = query({
     const entity = await ctx.db.get(args.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const membership = await ctx.runQuery(
-      api.workspaces.getCurrentUserMembership,
-      {
-        workspaceId: entity.workspaceId,
-      }
-    );
+    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
+      workspaceId: entity.workspaceId,
+    });
     if (!membership) throw new Error("Access denied - tasks cannot be shared");
 
     return await ctx.db
@@ -63,14 +57,12 @@ export const getUserAccessibleTasks = query({
     await requireAuth(ctx);
 
     // Получаем все доступные entities через convex-workspaces
-    const accessibleEntities = await ctx.runQuery(
-      api.workspaces.getUserAccessibleEntities,
-      {}
-    );
+    const accessibleEntities = await workspaces.getUserAccessibleEntitiesHandler(ctx);
 
     const tasks: {
       _id: Id<"tasks">;
       _creationTime: number;
+      title: string;
       entityId: Id<"entities">;
       userRole: UserRole;
       workspaceId: Id<"workspaces">;

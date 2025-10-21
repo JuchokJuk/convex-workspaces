@@ -7,7 +7,7 @@ Callbacks allow you to define custom cleanup logic when workspaces or entities a
 ```typescript
 // convex/workspaces.ts
 import { convexWorkspaces } from "convex-workspaces";
-import { DataModel } from "./_generated/dataModel";
+import { MutationCtx } from "./_generated/server";
 
 export const {
   createWorkspace,
@@ -15,12 +15,12 @@ export const {
   createEntity,
   removeEntity,
   // ... other functions
-} = convexWorkspaces<DataModel>({
+} = convexWorkspaces({
   callbacks: {
-    onWorkspaceRemoved: async (ctx, { entityIds }) => {
+    onWorkspaceRemoved: async (ctx: MutationCtx, { entityIds }) => {
       // Your cleanup logic here
     },
-    onEntityRemoved: async (ctx, { entityId }) => {
+    onEntityRemoved: async (ctx: MutationCtx, { entityId }) => {
       // Your cleanup logic here
     },
   },

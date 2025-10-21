@@ -4,8 +4,8 @@ import type { GenericQueryCtx, GenericDataModel, IdField } from "convex/server";
 import { getMembership } from "../../utils/queries/getMembership";
 import { requireAuth } from "../../utils/validation/requireAuth";
 
-export async function getCurrentUserMembershipHandler(
-  ctx: GenericQueryCtx<GenericDataModel>,
+export async function getCurrentUserMembershipHandler<T extends GenericDataModel>(
+  ctx: GenericQueryCtx<T>,
   args: { workspaceId: IdField<"workspaces">["_id"] }
 ) {
   const userId = await requireAuth(ctx);

@@ -1,7 +1,8 @@
 import { mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { api } from "../_generated/api";
 import { requireAuth } from "../utils/requireAuth";
+import { workspaces } from "../workspaces";
+import { Id } from "../_generated/dataModel";
 
 export const createTask = mutation({
   args: {
@@ -15,12 +16,9 @@ export const createTask = mutation({
     const entity = await ctx.db.get(args.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const membership = await ctx.runQuery(
-      api.workspaces.getCurrentUserMembership,
-      {
-        workspaceId: entity.workspaceId,
-      }
-    );
+    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
+      workspaceId: entity.workspaceId,
+    });
     if (!membership) throw new Error("Access denied");
 
     return await ctx.db.insert("tasks", {
@@ -45,12 +43,9 @@ export const updateTask = mutation({
     const entity = await ctx.db.get(task.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const membership = await ctx.runQuery(
-      api.workspaces.getCurrentUserMembership,
-      {
-        workspaceId: entity.workspaceId,
-      }
-    );
+    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
+      workspaceId: entity.workspaceId,
+    });
     if (!membership) throw new Error("Access denied");
 
     const { taskId, ...updates } = args;
@@ -72,14 +67,34 @@ export const removeTask = mutation({
     const entity = await ctx.db.get(task.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const membership = await ctx.runQuery(
-      api.workspaces.getCurrentUserMembership,
-      {
-        workspaceId: entity.workspaceId,
-      }
-    );
+    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
+      workspaceId: entity.workspaceId,
+    });
     if (!membership) throw new Error("Access denied");
 
     await ctx.db.delete(args.taskId);
+  },
+});
+
+export const createTaskWithEntity = mutation({
+  args: {
+    workspaceId: v.id("workspaces"),
+    title: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    // Создаем entity в воркспейсе
+    const entityId = (await workspaces.createEntityHandler(ctx, {
+      workspaceId: args.workspaceId,
+    })) as Id<"entities">;
+
+    // Создаем задачу напрямую (инлайн из createTask)
+    const taskId = await ctx.db.insert("tasks", {
+      entityId,
+      title: args.title,
+    });
+
+    return { entityId, taskId };
   },
 });

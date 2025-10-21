@@ -254,8 +254,8 @@ describe("Convex Workspaces - Group Access & Role-Based Permissions Tests", () =
       // Должно быть минимум 2 entities (плюс персональные воркспейсы)
       const workspaceEntities = accessibleEntities.filter(e => e.workspaceId === workspaceId);
       expect(workspaceEntities).toHaveLength(2);
-      expect(workspaceEntities[0].userRole).toBe("admin");
-      expect(workspaceEntities[1].userRole).toBe("admin");
+      expect(workspaceEntities[0]?.userRole).toBe("admin");
+      expect(workspaceEntities[1]?.userRole).toBe("admin");
     });
   });
 

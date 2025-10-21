@@ -8,14 +8,14 @@ import { getMembership } from "../../utils/queries/getMembership";
 import { requireAuth } from "../../utils/validation/requireAuth";
 import { UserRole } from "../../types";
 
-export async function getUserAccessibleEntitiesHandler(
-  ctx: GenericQueryCtx<GenericDataModel>
+export async function getUserAccessibleEntitiesHandler<T extends GenericDataModel>(
+  ctx: GenericQueryCtx<T>
 ) {
   const userId = await requireAuth(ctx);
 
   const memberships = await ctx.db
     .query("memberships")
-    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .withIndex("by_user", (q) => q.eq("userId", userId as any))
     .collect();
 
   const accessibleEntities: {
@@ -31,7 +31,7 @@ export async function getUserAccessibleEntitiesHandler(
       .withIndex("by_workspace", (q) =>
         q.eq(
           "workspaceId",
-          membership.workspaceId as IdField<"workspaces">["_id"]
+          membership.workspaceId as any
         )
       )
       .collect();

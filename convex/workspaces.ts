@@ -1,5 +1,4 @@
 import { convexWorkspaces } from "../src/index";
-import { DataModel } from "./_generated/dataModel";
 import { MutationCtx } from "./_generated/server";
 
 export const {
@@ -44,6 +43,9 @@ export const {
   checkEntityPermission,
   getUserRoleInWorkspace,
   getUserRoleForEntity,
+
+  // Handlers (same as all above convex functions, but just their raw handlers)
+  handlers,
 } = convexWorkspaces({
   callbacks: {
     onWorkspaceRemoved: async (ctx: MutationCtx, { entityIds }) => {
@@ -92,3 +94,5 @@ export const {
     },
   },
 });
+
+export const workspaces = handlers

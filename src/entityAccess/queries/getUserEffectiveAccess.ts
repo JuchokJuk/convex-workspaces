@@ -4,8 +4,8 @@ import type { GenericQueryCtx, GenericDataModel, IdField } from "convex/server";
 import { getEffectiveAccess } from "../../utils/permissions/getEffectiveAccess";
 import { requireAuth } from "../../utils/validation/requireAuth";
 
-export async function getUserEffectiveAccessHandler(
-  ctx: GenericQueryCtx<GenericDataModel>,
+export async function getUserEffectiveAccessHandler<T extends GenericDataModel>(
+  ctx: GenericQueryCtx<T>,
   args: { entityId: IdField<"entities">["_id"] }
 ) {
   const userId = await requireAuth(ctx);

@@ -4,8 +4,8 @@ import { getEntityAccess } from "../queries/getEntityAccess";
 import { getMinRole } from "./getMinRole";
 import { UserRole } from "../types/roles";
 
-export async function getEffectiveAccess(
-  ctx: GenericQueryCtx<GenericDataModel>,
+export async function getEffectiveAccess<T extends GenericDataModel>(
+  ctx: GenericQueryCtx<T>,
   entityId: IdField<"entities">["_id"],
   userId: IdField<"users">["_id"]
 ): Promise<UserRole | null> {

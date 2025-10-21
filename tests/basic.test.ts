@@ -4,6 +4,8 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
 import { clearDatabase } from "./utils/clearDatabase.js";
 import { createSignedClient } from "./utils/createSignedClient.js";
+import { Doc } from "../convex/_generated/dataModel.js";
+import { UserRole } from "../src/types.js";
 
 // Инициализируем dotenv для доступа к переменным окружения
 dotenv.config({ path: ".env.local" });
@@ -53,7 +55,7 @@ describe("Convex Workspaces - Basic Tests", () => {
 
       const workspace = await client1.query(api.workspaces.getWorkspaceById, {
         workspaceId,
-      });
+      }) as Doc<"workspaces"> & { userRole: UserRole } | null;
 
       expect(workspace).toBeDefined();
       expect(workspace?.name).toBe("Team Workspace");
@@ -120,7 +122,7 @@ describe("Convex Workspaces - Basic Tests", () => {
       });
 
       // Создаем документ с entity через action
-      const result = await client1.action(api.documents.actions.createDocumentWithEntity, {
+      const result = await client1.mutation(api.documents.mutations.createDocumentWithEntity, {
         workspaceId,
         title: "Test Document",
       });
@@ -146,7 +148,7 @@ describe("Convex Workspaces - Basic Tests", () => {
         personal: false,
       });
 
-      const result = await client1.action(api.documents.actions.createDocumentWithEntity, {
+      const result = await client1.mutation(api.documents.mutations.createDocumentWithEntity, {
         workspaceId,
         title: "Test Document",
       });
@@ -170,7 +172,7 @@ describe("Convex Workspaces - Basic Tests", () => {
       });
 
       // Создаем задачу с entity через action
-      const result = await client1.action(api.tasks.actions.createTaskWithEntity, {
+      const result = await client1.mutation(api.tasks.mutations.createTaskWithEntity, {
         workspaceId,
         title: "Test Task",
       });
@@ -196,7 +198,7 @@ describe("Convex Workspaces - Basic Tests", () => {
         personal: false,
       });
 
-      const result = await client1.action(api.tasks.actions.createTaskWithEntity, {
+      const result = await client1.mutation(api.tasks.mutations.createTaskWithEntity, {
         workspaceId,
         title: "Test Task",
       });

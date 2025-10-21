@@ -1,9 +1,9 @@
 import { query } from "../_generated/server";
 import { v } from "convex/values";
-import { api } from "../_generated/api";
 import { requireAuth } from "../utils/requireAuth";
 import { Id } from "../_generated/dataModel";
 import { UserRole } from "../../src";
+import { workspaces } from "../workspaces";
 
 export const getDocumentById = query({
   args: {
@@ -19,16 +19,13 @@ export const getDocumentById = query({
     const entity = await ctx.db.get(document.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const membership = await ctx.runQuery(
-      api.workspaces.getCurrentUserMembership,
-      {
-        workspaceId: entity.workspaceId,
-      }
-    );
+    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
+      workspaceId: entity.workspaceId,
+    });
     if (!membership) {
       // Проверяем доступ через shared entity
-      const effectiveAccess = await ctx.runQuery(
-        api.workspaces.getUserEffectiveAccess,
+      const effectiveAccess = await workspaces.getUserEffectiveAccessHandler(
+        ctx,
         {
           entityId: document.entityId,
         }
@@ -51,16 +48,13 @@ export const getDocumentsByEntity = query({
     const entity = await ctx.db.get(args.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const membership = await ctx.runQuery(
-      api.workspaces.getCurrentUserMembership,
-      {
-        workspaceId: entity.workspaceId,
-      }
-    );
+    const membership = await workspaces.getCurrentUserMembershipHandler(ctx, {
+      workspaceId: entity.workspaceId,
+    });
     if (!membership) {
       // Проверяем доступ через shared entity
-      const effectiveAccess = await ctx.runQuery(
-        api.workspaces.getUserEffectiveAccess,
+      const effectiveAccess = await workspaces.getUserEffectiveAccessHandler(
+        ctx,
         {
           entityId: args.entityId,
         }
@@ -81,10 +75,8 @@ export const getUserAccessibleDocuments = query({
     await requireAuth(ctx);
 
     // Получаем все доступные entities через convex-workspaces
-    const accessibleEntities = await ctx.runQuery(
-      api.workspaces.getUserAccessibleEntities,
-      {}
-    );
+    const accessibleEntities =
+      await workspaces.getUserAccessibleEntitiesHandler(ctx);
 
     const documents: {
       userRole: UserRole;

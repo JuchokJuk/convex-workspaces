@@ -9,12 +9,10 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as documents_actions from "../documents/actions.js";
 import type * as documents_mutations from "../documents/mutations.js";
 import type * as documents_queries from "../documents/queries.js";
 import type * as http from "../http.js";
 import type * as setDefaultUserData from "../setDefaultUserData.js";
-import type * as tasks_actions from "../tasks/actions.js";
 import type * as tasks_mutations from "../tasks/mutations.js";
 import type * as tasks_queries from "../tasks/queries.js";
 import type * as users_queries from "../users/queries.js";
@@ -38,12 +36,10 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  "documents/actions": typeof documents_actions;
   "documents/mutations": typeof documents_mutations;
   "documents/queries": typeof documents_queries;
   http: typeof http;
   setDefaultUserData: typeof setDefaultUserData;
-  "tasks/actions": typeof tasks_actions;
   "tasks/mutations": typeof tasks_mutations;
   "tasks/queries": typeof tasks_queries;
   "users/queries": typeof users_queries;

@@ -30,22 +30,22 @@ describe("Convex Workspaces - Integration & Callbacks Tests", () => {
       });
 
       // Создаем документы и задачи
-      const docResult1 = await client.action(api.documents.actions.createDocumentWithEntity, {
+      const docResult1 = await client.mutation(api.documents.mutations.createDocumentWithEntity, {
         workspaceId,
         title: "Document 1",
       });
 
-      const docResult2 = await client.action(api.documents.actions.createDocumentWithEntity, {
+      const docResult2 = await client.mutation(api.documents.mutations.createDocumentWithEntity, {
         workspaceId,
         title: "Document 2",
       });
 
-      const taskResult1 = await client.action(api.tasks.actions.createTaskWithEntity, {
+      const taskResult1 = await client.mutation(api.tasks.mutations.createTaskWithEntity, {
         workspaceId,
         title: "Task 1",
       });
 
-      const taskResult2 = await client.action(api.tasks.actions.createTaskWithEntity, {
+      const taskResult2 = await client.mutation(api.tasks.mutations.createTaskWithEntity, {
         workspaceId,
         title: "Task 2",
       });
@@ -136,13 +136,13 @@ describe("Convex Workspaces - Integration & Callbacks Tests", () => {
       });
 
       // Создаем документ в первом воркспейсе
-      const result = await client.action(api.documents.actions.createDocumentWithEntity, {
+      const result = await client.mutation(api.documents.mutations.createDocumentWithEntity, {
         workspaceId: workspace1Id,
         title: "Shared Document",
       });
 
       // Шерим документ (пока без реального userId)
-      // await client.action(api.documents.actions.shareDocumentWithUser, {
+      // await client.mutation(api.documents.mutations.shareDocumentWithUser, {
       //   documentId: result.documentId,
       //   targetUserId: "target-user-id" as any,
       //   accessLevel: "editor",
@@ -174,12 +174,12 @@ describe("Convex Workspaces - Integration & Callbacks Tests", () => {
       });
 
       // Создаем несколько задач
-      const task1 = await client.action(api.tasks.actions.createTaskWithEntity, {
+      const task1 = await client.mutation(api.tasks.mutations.createTaskWithEntity, {
         workspaceId,
         title: "Task 1",
       });
 
-      const task2 = await client.action(api.tasks.actions.createTaskWithEntity, {
+      const task2 = await client.mutation(api.tasks.mutations.createTaskWithEntity, {
         workspaceId,
         title: "Task 2",
       });
@@ -220,7 +220,7 @@ describe("Convex Workspaces - Integration & Callbacks Tests", () => {
         personal: false,
       });
 
-      const result = await client.action(api.documents.actions.createDocumentWithEntity, {
+      const result = await client.mutation(api.documents.mutations.createDocumentWithEntity, {
         workspaceId,
         title: "Private Document",
       });
