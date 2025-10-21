@@ -49,6 +49,7 @@ export const {
   handlers,
 } = convexWorkspaces({
   callbacks: {
+    // TODO: prevent deletion of multi-workspaces data
     onWorkspaceRemoved: async (ctx: MutationCtx, { entityIds }) => {
       // Удаляем все документы и задачи, связанные с удаленными entities
       for (const entityId of entityIds) {
