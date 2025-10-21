@@ -23,6 +23,7 @@ export const createDocument = mutation({
       }
     );
     if (!membership) throw new Error("Access denied");
+    if (membership.userRole === "viewer") throw new Error("Insufficient permissions");
 
     return await ctx.db.insert("documents", {
       entityId: args.entityId,

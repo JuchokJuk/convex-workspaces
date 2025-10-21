@@ -39,19 +39,27 @@ export const getPersonalWorkspace = queryGeneric({
       name: v.string(),
       ownerId: v.string(),
       personal: v.boolean(),
+      userRole: v.string(),
     }),
     v.null()
   ),
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx);
 
-    return await ctx.db
+    const workspace = await ctx.db
       .query("workspaces")
       .withIndex("by_owner_personal", (q) =>
         // @ts-expect-error double index typing missing
         q.eq("ownerId", userId).eq("personal", true)
       )
       .first();
+
+    if (!workspace) return null;
+
+    const membership = await getMembership(ctx, workspace._id, userId);
+    if (!membership) return null;
+
+    return { ...workspace, userRole: membership.userRole };
   },
 });
 

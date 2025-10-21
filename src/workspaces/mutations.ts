@@ -14,10 +14,34 @@ export const createWorkspace = mutationGeneric({
   handler: async (ctx, args) => {
     const userId = await requireAuth(ctx);
 
+    // Если пытаемся создать персональный воркспейс, проверяем что его еще нет
+    if (args.personal) {
+      const existingPersonalWorkspace = await ctx.db
+        .query("memberships")
+        .withIndex("by_user", (q: any) => q.eq("userId", userId))
+        .filter((q: any) => q.eq(q.field("userRole"), "admin"))
+        .collect();
+
+      // Проверяем, есть ли уже персональный воркспейс
+      for (const membership of existingPersonalWorkspace) {
+        const workspace = await ctx.db.get(membership.workspaceId);
+        if (workspace?.personal) {
+          throw new Error("User already has a personal workspace");
+        }
+      }
+    }
+
     const workspaceId = await ctx.db.insert("workspaces", {
       name: args.name,
       personal: args.personal,
       ownerId: userId,
+    });
+
+    // Создаем membership для создателя воркспейса
+    await ctx.db.insert("memberships", {
+      workspaceId,
+      userId,
+      userRole: "admin",
     });
 
     return workspaceId;

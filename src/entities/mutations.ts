@@ -43,7 +43,7 @@ export function assembleRemoveEntity(
 
       const membership = await getMembership(ctx, entity.workspaceId, userId);
       requirePermission(
-        membership && membership.userRole !== "viewer",
+        membership && membership.userRole === "admin",
         "removing entities"
       );
 
