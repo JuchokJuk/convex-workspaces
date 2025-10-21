@@ -7,12 +7,18 @@ export default defineConfig({
     nav: [
       { text: "Guide", link: "/guide/quick-start" },
       { text: "Reference", link: "/reference/callbacks" },
-      { text: "Tests", link: "/tests/" },
       { text: "NPM", link: "https://www.npmjs.com/package/convex-workspaces" },
-      { text: "GitHub", link: "https://github.com/JuchokJuk/convex-workspaces" },
+      {
+        text: "GitHub",
+        link: "https://github.com/JuchokJuk/convex-workspaces",
+      },
     ],
 
     sidebar: {
+      "/": [{
+        text: "Home",
+        items: [{ text: "Quick Start", link: "/guide/quick-start" }],
+      }],
       "/guide/": [
         {
           text: "Guide",
@@ -25,13 +31,10 @@ export default defineConfig({
       "/reference/": [
         {
           text: "Reference",
-          items: [{ text: "API Callbacks", link: "/reference/callbacks" }],
-        },
-      ],
-      "/tests/": [
-        {
-          text: "Tests",
-          items: [{ text: "Test Overview", link: "/tests/" }],
+          items: [
+            { text: "Callbacks", link: "/reference/callbacks" },
+            { text: "API", link: "/reference/api" },
+          ],
         },
       ],
     },

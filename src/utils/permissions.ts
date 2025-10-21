@@ -8,6 +8,7 @@ import { requireAuth } from "./validation/requireAuth";
 export const checkUserPermission = queryGeneric({
   args: {
     workspaceId: v.id("workspaces"),
+    targetUserId: v.id("users"),
     requiredRole: v.union(
       v.literal("admin"),
       v.literal("editor"),
@@ -15,11 +16,26 @@ export const checkUserPermission = queryGeneric({
     ),
   },
   handler: async (ctx, args) => {
-    const userId = await requireAuth(ctx);
+    const currentUserId = await requireAuth(ctx);
+    
+    // Проверяем, что текущий пользователь состоит в воркспейсе
+    const currentUserMembership = await ctx.db
+      .query("memberships")
+      .withIndex("by_workspace_user", (q) =>
+        // @ts-expect-error double index typing missing
+        q.eq("workspaceId", args.workspaceId).eq("userId", currentUserId)
+      )
+      .first();
+    
+    if (!currentUserMembership) {
+      throw new Error("Access denied - you are not a member of this workspace");
+    }
+    
+    // Теперь безопасно проверяем права target пользователя
     return await checkWorkspaceAccess(
       ctx,
       args.workspaceId,
-      userId,
+      args.targetUserId,
       args.requiredRole as UserRole
     );
   },

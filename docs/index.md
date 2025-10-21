@@ -1,36 +1,29 @@
----
-layout: home
+# Convex Workspaces
 
-hero:
-  name: "Convex Workspaces"
-  text: "Multi-User Collaboration for Convex"
-  tagline: "Add team workspaces, role-based access, and sharing capabilities to your Convex app"
+[NPM Package](https://www.npmjs.com/package/convex-workspaces)
 
-  actions:
-    - theme: brand
-      text: Quick Start
-      link: /guide/quick-start
-    - theme: alt
-      text: Usage Examples
-      link: /guide/examples
+A module that adds **multi-user collaboration** to your Convex app with workspaces, role-based access, and sharing capabilities.
 
-features:
-  - icon: 🏢
-    title: Team Workspaces
-    details: Create groups where users can collaborate (like "Marketing Team" or "Project Alpha")
-  - icon: 👥
-    title: Role-Based Access
-    details: Admin can invite users, editors can modify data, viewers can only read
-  - icon: 🔗
-    title: Sharing System
-    details: Share entities between workspaces with proper permissions
-  - icon: 🏠
-    title: Personal Spaces
-    details: Every user gets their own private workspace automatically
-  - icon: ⚡
-    title: TypeScript
-    details: Full type safety and ready-to-use Convex mutations/queries
-  - icon: 🧪
-    title: Testing
-    details: Test coverage with Vitest for reliability
----
+## Installation
+
+```bash
+pnpm i convex-workspaces
+```
+
+## The Problem It Solves
+
+- You have a Convex app with users
+- You want some users to collaborate on the same data/entities
+- You need different permission levels (admin/editor/viewer)
+- You want to share access between users
+
+
+
+## What It Provides
+
+- **Workspaces**: Groups where users can collaborate (like "Marketing Team" or "Project Alpha")
+- **Role-based Access**: Admin can invite users, editors can modify data, viewers can only read
+- **Sharing System**: Share entities between workspaces with proper permissions
+- **Personal Workspaces**: Every user gets their own private space
+
+Think of it as **"Convex Auth + Team Collaboration"** - it extends your existing Convex app with multi-user features.

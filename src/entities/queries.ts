@@ -47,9 +47,33 @@ export const checkEntityAccess = queryGeneric({
     userId: v.id("users"),
   },
   handler: async (ctx, args) => {
+    const currentUserId = await requireAuth(ctx);
+    
     const entity = await ctx.db.get(args.entityId);
     if (!entity) return false;
 
+    // Проверяем, что текущий пользователь имеет доступ к entity
+    // Либо через членство в оригинальном воркспейсе, либо через shared access
+    const currentUserMembership = await getMembership(ctx, entity.workspaceId, currentUserId);
+    if (!currentUserMembership) {
+      // Проверяем shared access
+      const entityAccess = await getEntityAccess(ctx, args.entityId);
+      let hasSharedAccess = false;
+      
+      for (const access of entityAccess) {
+        const membership = await getMembership(ctx, access.workspaceId as any, currentUserId);
+        if (membership) {
+          hasSharedAccess = true;
+          break;
+        }
+      }
+      
+      if (!hasSharedAccess) {
+        throw new Error("Access denied - you are not a member of this workspace");
+      }
+    }
+
+    // Теперь безопасно проверяем доступ target пользователя
     const membership = await getMembership(
       ctx,
       entity.workspaceId,
