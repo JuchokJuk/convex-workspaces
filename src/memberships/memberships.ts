@@ -1,12 +1,12 @@
 import {
   membershipsMutations,
   membershipsMutationsHandlers,
-} from "./mutations";
+} from "./mutations/mutations";
 
 import {
   membershipsQueries,
   membershipsQueriesHandlers,
-} from "./queries";
+} from "./queries/queries";
 
 import { memberships as membershipsSchema } from "./schema";
 

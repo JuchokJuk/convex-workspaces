@@ -1,7 +1,7 @@
-import { workspaces, type OnWorkspaceRemovedCallback } from "./workspaces";
-import { memberships } from "./memberships";
-import { entities, type OnEntityRemovedCallback } from "./entities";
-import { entityAccess } from "./entityAccess";
+import { workspaces, type OnWorkspaceRemovedCallback } from "./workspaces/workspaces";
+import { memberships } from "./memberships/memberships";
+import { entities, type OnEntityRemovedCallback } from "./entities/entities";
+import { entityAccess } from "./entityAccess/entityAccess";
 
 import {
   checkUserPermission,

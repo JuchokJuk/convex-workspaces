@@ -3,10 +3,10 @@ export { convexWorkspaces } from "./convexWorkspaces";
 export { initializePersonalWorkspace } from "./utils/initializePersonalWorkspace";
 
 // Export schemas
-import { workspaces } from "./workspaces";
-import { memberships } from "./memberships";
-import { entities } from "./entities";
-import { entityAccess } from "./entityAccess";
+import { workspaces } from "./workspaces/workspaces";
+import { memberships } from "./memberships/memberships";
+import { entities } from "./entities/entities";
+import { entityAccess } from "./entityAccess/entityAccess";
 
 // Combined schema for easy import
 export const workspacesTables = {

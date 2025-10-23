@@ -1,6 +1,6 @@
 {
   "name": "convex-workspaces",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Add multi-user collaboration to your Convex app with workspaces, role-based access, and sharing capabilities",
   "author": "Juchok Juk",
   "license": "Unlicense",

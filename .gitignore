@@ -8,8 +8,6 @@ coverage/
 # Environment variables
 .env.local
 
-
-
 # Documentation build (VitePress)
 docs/.vitepress/dist/
 docs/.vitepress/cache/

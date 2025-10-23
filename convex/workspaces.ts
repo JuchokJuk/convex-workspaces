@@ -1,4 +1,5 @@
 import { convexWorkspaces } from "../src/index";
+import { Id } from "./_generated/dataModel";
 import { MutationCtx } from "./_generated/server";
 
 export const {
@@ -50,7 +51,10 @@ export const {
 } = convexWorkspaces({
   callbacks: {
     // TODO: prevent deletion of multi-workspaces data
-    onWorkspaceRemoved: async (ctx: MutationCtx, { entityIds }) => {
+    onWorkspaceRemoved: async (
+      ctx: MutationCtx,
+      { entityIds }: { entityIds: Id<"entities">[] }
+    ) => {
       // Удаляем все документы и задачи, связанные с удаленными entities
       for (const entityId of entityIds) {
         // Удаляем документы
@@ -74,7 +78,10 @@ export const {
         }
       }
     },
-    onEntityRemoved: async (ctx: MutationCtx, { entityId }) => {
+    onEntityRemoved: async (
+      ctx: MutationCtx,
+      { entityId }: { entityId: Id<"entities"> }
+    ) => {
       // Удаляем все документы и задачи, связанные с удаленной entity
       const documents = await ctx.db
         .query("documents")
@@ -97,4 +104,4 @@ export const {
   },
 });
 
-export const workspaces = handlers
+export const workspaces = handlers;

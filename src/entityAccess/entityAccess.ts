@@ -1,12 +1,12 @@
 import {
   entityAccessMutations,
   entityAccessMutationsHandlers,
-} from "./mutations";
+} from "./mutations/mutations";
 
 import {
   entityAccessQueries,
   entityAccessQueriesHandlers,
-} from "./queries";
+} from "./queries/queries";
 
 import { entityAccess as entityAccessSchema } from "./schema";
 

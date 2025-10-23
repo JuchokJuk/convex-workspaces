@@ -3,12 +3,12 @@ import {
   workspacesMutationsHandlers,
   assembleRemoveWorkspace,
   type OnWorkspaceRemovedCallback,
-} from "./mutations";
+} from "./mutations/mutations";
 
 import {
   workspacesQueries,
   workspacesQueriesHandlers,
-} from "./queries";
+} from "./queries/queries";
 
 import { workspaces as workspacesSchema } from "./schema";
 

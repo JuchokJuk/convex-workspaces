@@ -3,9 +3,9 @@ import {
   entitiesMutationshandlers,
   assembleRemoveEntity,
   type OnEntityRemovedCallback,
-} from "./mutations";
+} from "./mutations/mutations";
 
-import { entitiesQueries, entitiesQuerieshandlers } from "./queries";
+import { entitiesQueries, entitiesQuerieshandlers } from "./queries/queries";
 
 import { entities as entitiesSchema } from "./schema";
 
