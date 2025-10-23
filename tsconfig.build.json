@@ -18,7 +18,7 @@
     "allowSyntheticDefaultImports": true,
     "noEmitOnError": false,
     "noEmit": false,
-    "isolatedModules": true
+    "isolatedModules": false
   },
   "include": [
     "src/**/*.ts"
